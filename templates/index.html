@@ -10,10 +10,12 @@
     <th>ステータス</th>
   </tr>
   {% for task in task_list %}
+  <tr>
     <td>{{ task.title }}</td>
     <td>{{ task.content }}</td>
     <td>{{ task.due_date }}</td>
     <td>{{ task.completed }}</td>
+  </tr>
   {% endfor %}
 </table>
 {%endblock%}

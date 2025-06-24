@@ -1,4 +1,5 @@
 from flask import Flask,render_template,g
+from flask import request,redirect
 import sqlite3
 import os
 
@@ -7,12 +8,21 @@ app = Flask(__name__)
 @app.route("/")
 def top():
     create_table()
-    insert_data()
+    # insert_data()
     task_list =get_db().execute("select id,title,content,due_date,completed from tasks").fetchall()
     return render_template("index.html",task_list=task_list)
-
-@app.route("/regist")
+#--- タスク追加 ---
+@app.route("/regist",methods=['GET','POST'])
 def regist():
+    if request.method == 'POST':
+        title =request.form.get('title')
+        content =request.form.get('content')
+        due_date =request.form.get('due_date')
+        completed =request.form.get('completed')
+        get_db().execute("INSERT INTO tasks (title,content,due_date,completed) values(?,?,?,?)",[title,content,due_date,completed])
+        get_db().commit()
+        return redirect('/')
+    
     return render_template("regist.html")
 
     
