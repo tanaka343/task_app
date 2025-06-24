@@ -4,9 +4,8 @@ DATABASE = "database.db"
 app = Flask(__name__)
 
 @app.route("/")
-def hello_world():
-    return "<p>Hello, World!</p>"
-
+def top():
+    return render_template("index.html")
 
     
 #--- データベース作成、接続 ---
