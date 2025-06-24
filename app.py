@@ -1,11 +1,15 @@
 from flask import Flask,render_template,g
 import sqlite3
-DATABASE = "database.db"
+import os
+
 app = Flask(__name__)
 
 @app.route("/")
 def top():
-    return render_template("index.html")
+    create_table()
+    insert_data()
+    task_list =get_db().execute("select id,title,content,due_date,completed from tasks").fetchall()
+    return render_template("index.html",task_list=task_list)
 
 @app.route("/regist")
 def regist():
@@ -13,6 +17,8 @@ def regist():
 
     
 #--- データベース作成、接続 ---
+DATABASE = "database.db"
+# instance ディレクトリがなければ作成 (このブロックも重要)
 def connect_db():
     rv = sqlite3.connect(DATABASE)
     rv.row_factory = sqlite3.Row
@@ -25,10 +31,25 @@ def get_db():
 #--- テーブルの作成 ---
 def create_table():
     con = sqlite3.connect(DATABASE)
-    con.execute("CREATE TABLE IF NOT EXISTS memo(id integer primary key autoincrement,title text,content text,due_date text,completed integer)")
-
+    con.execute("CREATE TABLE IF NOT EXISTS tasks (id INTEGER PRIMARY KEY AUTOINCREMENT,title TEXT,content TEXT,due_date TEXT,completed INTEGER)")
+    con.commit()
+    con.close()
+#--- テストデータの挿入---
+def insert_data():
+    con = sqlite3.connect(DATABASE)
+    title="買い物"
+    content="バナナ買う"
+    due_date="6/24"
+    completed=1
+    con.execute("INSERT INTO tasks (title,content,due_date,completed) values(?,?,?,?)",[title,content,due_date,completed])
+    con.commit()
+    con.close()
 
 #--- 実行部分 ---
 if __name__=="__main__":
-    create_table()
+    # with app.app_context():
+    #     create_table()
+    #     insert_data()
     app.run()
+    
+    

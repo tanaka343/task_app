@@ -9,9 +9,11 @@
     <th>期日</th>
     <th>ステータス</th>
   </tr>
-    <td>買い物</td>
-    <td>バナナ</td>
-    <td>6/24</td>
-    <td>未完了</td>
+  {% for task in task_list %}
+    <td>{{ task.title }}</td>
+    <td>{{ task.content }}</td>
+    <td>{{ task.due_date }}</td>
+    <td>{{ task.completed }}</td>
+  {% endfor %}
 </table>
 {%endblock%}
