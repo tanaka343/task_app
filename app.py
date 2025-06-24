@@ -7,6 +7,10 @@ app = Flask(__name__)
 def top():
     return render_template("index.html")
 
+@app.route("/regist")
+def regist():
+    return render_template("regist.html")
+
     
 #--- データベース作成、接続 ---
 def connect_db():
