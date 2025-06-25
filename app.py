@@ -39,6 +39,15 @@ def edit(id):
     post =get_db().execute("select id,title,content,due_date,completed from tasks where id=?",(id,)).fetchone()
     return render_template("edit.html",post=post)
 
+#--- タスク削除 ---
+@app.route("/<id>/delete",methods=['GET','POST'])
+def delete(id):
+    if request.method=='POST':
+        get_db().execute("delete from tasks where id=?",(id,))
+        get_db().commit()
+        return redirect('/')
+    post =get_db().execute("select id,title,content,due_date,completed from tasks where id=?",(id,)).fetchone()
+    return render_template("delete.html",post=post)
     
 #--- データベース作成、接続 ---
 DATABASE = "database.db"

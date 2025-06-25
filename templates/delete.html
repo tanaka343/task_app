@@ -1,6 +1,6 @@
 {% extends "base.html" %}
 {%block content%}
-<h1>新規登録</h1>
+<h1>削除</h1>
 <form method="POST">
   <table border="1">
     <tr>
@@ -9,12 +9,12 @@
       <th>期日</th>
       <th>ステータス</th>
     </tr>
-      <td><input type="text" name="title"></td>
-      <td><input type="text" name="content"></td>
-      <td><input type="text" name="due_date"></td>
-      <td><input type="text" name="completed"></td>
+      <td><input type="text" name="title" value="{{post.title}}"></td>
+      <td><input type="text" name="content" value="{{post.content}}"></td>
+      <td><input type="text" name="due_date" value="{{post.due_date}}"></td>
+      <td><input type="text" name="completed" value="{{post.completed}}"></td>
   </table>
-  <input type="submit" value="登録する">
+  <input type="submit" value="削除する">
 </form>
 
 {%endblock%}
