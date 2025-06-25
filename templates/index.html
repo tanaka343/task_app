@@ -8,6 +8,7 @@
     <th>内容</th>
     <th>期日</th>
     <th>ステータス</th>
+    <th></th>
   </tr>
   {% for task in task_list %}
   <tr>
@@ -15,6 +16,10 @@
     <td>{{ task.content }}</td>
     <td>{{ task.due_date }}</td>
     <td>{{ task.completed }}</td>
+    <td>
+      <a href="/{{task.id}}/edit">編集</a>
+      <a href="/{{task.id}}/delete">削除</a>
+    </td>
   </tr>
   {% endfor %}
 </table>

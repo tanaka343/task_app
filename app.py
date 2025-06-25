@@ -25,6 +25,20 @@ def regist():
     
     return render_template("regist.html")
 
+#--- タスク編集 ---
+@app.route("/<id>/edit",methods=['GET','POST'])
+def edit(id):
+    if request.method == 'POST':
+        title =request.form.get('title')
+        content =request.form.get('content')
+        due_date =request.form.get('due_date')
+        completed =request.form.get('completed')
+        get_db().execute("update tasks set title=?, content=?,due_date=?,completed=? where id=?",[title,content,due_date,completed,id])
+        get_db().commit()
+        return redirect('/')
+    post =get_db().execute("select id,title,content,due_date,completed from tasks where id=?",(id,)).fetchone()
+    return render_template("edit.html",post=post)
+
     
 #--- データベース作成、接続 ---
 DATABASE = "database.db"
