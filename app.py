@@ -4,7 +4,7 @@ import sqlite3
 import os
 
 app = Flask(__name__)
-
+DATABASE = "database.db"
 @app.route("/")
 def top():
     create_table()
@@ -32,7 +32,7 @@ def edit(id):
         title =request.form.get('title')
         content =request.form.get('content')
         due_date =request.form.get('due_date')
-        completed =request.form.get('completed')
+        completed =int(request.form.get('completed'))
         get_db().execute("update tasks set title=?, content=?,due_date=?,completed=? where id=?",[title,content,due_date,completed,id])
         get_db().commit()
         return redirect('/')
@@ -50,7 +50,7 @@ def delete(id):
     return render_template("delete.html",post=post)
     
 #--- データベース作成、接続 ---
-DATABASE = "database.db"
+
 # instance ディレクトリがなければ作成 (このブロックも重要)
 def connect_db():
     rv = sqlite3.connect(DATABASE)
@@ -82,7 +82,8 @@ def insert_data():
 if __name__=="__main__":
     # with app.app_context():
     #     create_table()
-    #     insert_data()
+    
+        # insert_data()
     app.run()
     
     

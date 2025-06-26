@@ -15,7 +15,13 @@
     <td>{{ task.title }}</td>
     <td>{{ task.content }}</td>
     <td>{{ task.due_date }}</td>
-    <td>{{ task.completed }}</td>
+    <td>
+      {% if task.completed==0 %}
+        未完了
+      {% else %}
+        完了
+      {% endif %}
+    </td>
     <td>
       <a href="/{{task.id}}/edit">編集</a>
       <a href="/{{task.id}}/delete">削除</a>

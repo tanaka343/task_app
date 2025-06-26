@@ -11,8 +11,13 @@
     </tr>
       <td><input type="text" name="title"></td>
       <td><input type="text" name="content"></td>
-      <td><input type="text" name="due_date"></td>
-      <td><input type="text" name="completed"></td>
+      <td><input type="date" name="due_date"></td>
+      <td>
+        <select name="completed" id="">
+          <option value="0">未完了</option>
+          <option value="1" selected>完了</option>
+        </select>
+      </td>
   </table>
   <input type="submit" value="登録する">
 </form>
