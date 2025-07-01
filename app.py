@@ -67,8 +67,8 @@ def deletes():
         id_list=request.form.getlist('deletes')
         for id in id_list:
             get_db().execute("delete from tasks where id=?",(id,))
-            get_db().commit()
-        return redirect('/')
+        get_db().commit()
+    return redirect('/')
 
 #--- データベース作成、接続 ---
 # instance ディレクトリがなければ作成 (このブロックも重要)

@@ -13,7 +13,7 @@
     {% for post in post_list %}
       <tr>
         <td>
-          <input type="checkbox" name="deletes" value="{{post.id}}" checked>
+          <input type="hidden" name="deletes" value="{{post.id}}" >
         </td>
         <td><input type="text" name="title" value="{{post.title}}"></td>
         <td><input type="text" name="content" value="{{post.content}}"></td>
