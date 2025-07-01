@@ -49,8 +49,28 @@ def delete(id):
     post =get_db().execute("select id,title,content,due_date,completed from tasks where id=?",(id,)).fetchone()
     return render_template("delete.html",post=post)
     
-#--- データベース作成、接続 ---
 
+#--- タスク一括削除　---
+@app.route("/delete_all",methods=['GET','POST'])
+def delete_all():
+    post_list=[]
+    if request.method=='POST':
+        id_list =request.form.getlist('delete_all')
+        for id in id_list:
+            post_list.append(get_db().execute("select id,title,content,due_date,completed from tasks where id=?",(id,)).fetchone())
+            
+    return render_template("delete_all.html",post_list=post_list)
+
+@app.route("/deletes",methods=['GET','POST'])
+def deletes():
+    if request.method=='POST':
+        id_list=request.form.getlist('deletes')
+        for id in id_list:
+            get_db().execute("delete from tasks where id=?",(id,))
+            get_db().commit()
+        return redirect('/')
+
+#--- データベース作成、接続 ---
 # instance ディレクトリがなければ作成 (このブロックも重要)
 def connect_db():
     rv = sqlite3.connect(DATABASE)

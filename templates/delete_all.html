@@ -1,0 +1,28 @@
+{% extends "base.html" %}
+{%block content%}
+<h1>一括削除</h1>
+<form action="/deletes" method="POST">
+  <table border="1">
+    <tr>
+      <th></th>
+      <th>タイトル</th>
+      <th>内容</th>
+      <th>期日</th>
+      <th>ステータス</th>
+    </tr> 
+    {% for post in post_list %}
+      <tr>
+        <td>
+          <input type="checkbox" name="deletes" value="{{post.id}}" checked>
+        </td>
+        <td><input type="text" name="title" value="{{post.title}}"></td>
+        <td><input type="text" name="content" value="{{post.content}}"></td>
+        <td><input type="text" name="due_date" value="{{post.due_date}}"></td>
+        <td><input type="text" name="completed" value="{{post.completed}}"></td>
+      </tr>
+    {% endfor %}
+  </table>
+  <input type="submit" value="すべて削除する">
+</form>
+
+{%endblock%}
