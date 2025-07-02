@@ -1,6 +1,9 @@
 {% extends "base.html" %}
 {%block content%}
 <h1>一括削除</h1>
+{% if post_list==[] %}
+<p>タスクが選択されていません</p>
+{% else %}
 <form action="/deletes" method="POST">
   <table border="1">
     <tr>
@@ -15,14 +18,21 @@
         <td>
           <input type="hidden" name="deletes" value="{{post.id}}" >
         </td>
-        <td><input type="text" name="title" value="{{post.title}}"></td>
-        <td><input type="text" name="content" value="{{post.content}}"></td>
-        <td><input type="text" name="due_date" value="{{post.due_date}}"></td>
-        <td><input type="text" name="completed" value="{{post.completed}}"></td>
+        <td>{{post.title}}</td>
+        <td>{{post.content}}</td>
+        <td>{{post.due_date}}</td>
+        <td>
+        {% if post.completed==0 %}
+        未完了
+        {% else %}
+        完了
+        {% endif %}
+        </td>
       </tr>
     {% endfor %}
   </table>
   <input type="submit" value="すべて削除する">
+  <a href="/">一覧へ戻る</a>
 </form>
-
+{% endif %}
 {%endblock%}

@@ -11,6 +11,8 @@ def top():
     # insert_data()
     task_list =get_db().execute("select id,title,content,due_date,completed from tasks").fetchall()
     return render_template("index.html",task_list=task_list)
+
+
 #--- タスク追加 ---
 @app.route("/regist",methods=['GET','POST'])
 def regist():
@@ -56,8 +58,9 @@ def delete_all():
     post_list=[]
     if request.method=='POST':
         id_list =request.form.getlist('delete_all')
-        for id in id_list:
-            post_list.append(get_db().execute("select id,title,content,due_date,completed from tasks where id=?",(id,)).fetchone())
+        if id_list is not None:
+            for id in id_list:
+                post_list.append(get_db().execute("select id,title,content,due_date,completed from tasks where id=?",(id,)).fetchone())
             
     return render_template("delete_all.html",post_list=post_list)
 
@@ -68,6 +71,7 @@ def deletes():
         for id in id_list:
             get_db().execute("delete from tasks where id=?",(id,))
         get_db().commit()
+    
     return redirect('/')
 
 #--- データベース作成、接続 ---

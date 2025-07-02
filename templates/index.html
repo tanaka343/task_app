@@ -4,37 +4,37 @@
 <a href="/regist">新規登録</a>
 
 <form action="/delete_all" method="post">
-  <table border="1">
-    <tr>
-      <th></th>
-      <th>タイトル</th>
-      <th>内容</th>
-      <th>期日</th>
-      <th>ステータス</th>
-      <th></th>
-    </tr>
-    {% for task in task_list %}
-    <tr>
-      
+  <div>
+    <table border="1">
+      <tr>
+        <th></th>
+        <th>タイトル</th>
+        <th>内容</th>
+        <th>期日</th>
+        <th>ステータス</th>
+        <th></th>
+      </tr>
+      {% for task in task_list %}
+      <tr>
         <td><input type="checkbox" name="delete_all" value="{{task.id}}"></td>
-      
-      <td>{{ task.title }}</td>
-      <td>{{ task.content }}</td>
-      <td>{{ task.due_date }}</td>
-      <td>
-        {% if task.completed==0 %}
-          未完了
-        {% else %}
-          完了
-        {% endif %}
-      </td>
-      <td>
-        <a href="/{{task.id}}/edit">編集</a>
-        <a href="/{{task.id}}/delete">削除</a>
-      </td>
-    </tr>
-    {% endfor %}
-  </table>
+        <td>{{ task.title }}</td>
+        <td>{{ task.content }}</td>
+        <td>{{ task.due_date }}</td>
+        <td>
+          {% if task.completed==0 %}
+            未完了
+          {% else %}
+            完了
+          {% endif %}
+        </td>
+        <td>
+          <a href="/{{task.id}}/edit">編集</a>
+          <a href="/{{task.id}}/delete">削除</a>
+        </td>
+      </tr>
+      {% endfor %}
+    </table>
+  </div>
   <button>一括削除</button>
 </form>
-{%endblock%}
+{% endblock %}
