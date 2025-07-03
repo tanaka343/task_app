@@ -5,6 +5,7 @@ body{
 table{
   border-collapse: collapse;
   width: 100%;
+  margin-top: 0.2em;
 }
 th,td{
   border:2px solid #fff;
@@ -20,10 +21,20 @@ h1{
   text-align: center;
   font-size: 2.5em;
 }
-a,button{
-  font-size: 0.8em;
+form>a,input[type="submit"], h1 + a,button{
+  font-size: 0.9em;
   padding: 0.2em 1em;
   border: none;
   border-radius: 0.5em;
-  /* background-color:#b2adad ; */
+  background-color:#e7e2e2 ;
+  margin-top: 0.2em;
+  text-decoration: none;
+}
+button:hover,form>a:hover,input[type="submit"]:hover,h1 + a:hover{
+  background-color: #a6a4a1;
+  color :#fff;
+}
+table a{
+ 
+  margin-left: 0.5em;
 }
