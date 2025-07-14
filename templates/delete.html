@@ -9,6 +9,7 @@
       <th>期日</th>
       <th>ステータス</th>
     </tr>
+    <tr class="red">
       <td>{{post.title}}</td>
       <td>{{post.content}}</td>
       <td>{{post.due_date}}</td>
@@ -20,6 +21,7 @@
         {% endif %}
         <!-- <input type="text" name="completed" value="{{post.completed}}"> -->
       </td>
+    </tr>
   </table>
   <input type="submit" value="削除する">
   <a href="/">一覧へ戻る</a>
