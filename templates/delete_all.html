@@ -4,35 +4,37 @@
 {% if post_list==[] %}
 <p>タスクが選択されていません</p>
 {% else %}
-<form action="/deletes" method="POST">
-  <table border="1">
-    <tr>
-      <th></th>
-      <th>タイトル</th>
-      <th>内容</th>
-      <th>期日</th>
-      <th>ステータス</th>
-    </tr> 
-    {% for post in post_list %}
-      <tr class="red">
-        <td>
-          <input type="hidden" name="deletes" value="{{post.id}}" >
-        </td>
-        <td>{{post.title}}</td>
-        <td>{{post.content}}</td>
-        <td>{{post.due_date}}</td>
-        <td>
-        {% if post.completed==0 %}
-        未完了
-        {% else %}
-        完了
-        {% endif %}
-        </td>
-      </tr>
-    {% endfor %}
-  </table>
-  <input type="submit" value="すべて削除する">
-  <a href="/">一覧へ戻る</a>
-</form>
+<div class="task">
+  <form action="/deletes" method="POST">
+    <table border="1">
+      <tr>
+        <th></th>
+        <th>タイトル</th>
+        <th>内容</th>
+        <th>期日</th>
+        <th>ステータス</th>
+      </tr> 
+      {% for post in post_list %}
+        <tr class="red">
+          <td>
+            <input type="hidden" name="deletes" value="{{post.id}}" >
+          </td>
+          <td>{{post.title}}</td>
+          <td>{{post.content}}</td>
+          <td>{{post.due_date}}</td>
+          <td >
+          {% if post.completed==0 %}
+          未完了
+          {% else %}
+          完了
+          {% endif %}
+          </td>
+        </tr>
+      {% endfor %}
+    </table>
+    <input type="submit" value="すべて削除する" class="button">
+    <a href="/" class="button">一覧へ戻る</a>
+  </form>
+</div>
 {% endif %}
 {%endblock%}

@@ -1,30 +1,32 @@
 {% extends "base.html" %}
 {%block content%}
 <h1>削除</h1>
-<form method="POST">
-  <table border="1">
-    <tr>
-      <th>タイトル</th>
-      <th>内容</th>
-      <th>期日</th>
-      <th>ステータス</th>
-    </tr>
-    <tr class="red">
-      <td>{{post.title}}</td>
-      <td>{{post.content}}</td>
-      <td>{{post.due_date}}</td>
-      <td>
-        {% if post.completed==0 %}
-        未完了
-        {% else %}
-        完了
-        {% endif %}
-        <!-- <input type="text" name="completed" value="{{post.completed}}"> -->
-      </td>
-    </tr>
-  </table>
-  <input type="submit" value="削除する">
-  <a href="/">一覧へ戻る</a>
-</form>
+<div class="task">
+  <form method="POST">
+    <table border="1">
+      <tr>
+        <th>タイトル</th>
+        <th>内容</th>
+        <th>期日</th>
+        <th>ステータス</th>
+      </tr>
+      <tr class="red">
+        <td>{{post.title}}</td>
+        <td>{{post.content}}</td>
+        <td>{{post.due_date}}</td>
+        <td>
+          {% if post.completed==0 %}
+          未完了
+          {% else %}
+          完了
+          {% endif %}
+          <!-- <input type="text" name="completed" value="{{post.completed}}"> -->
+        </td>
+      </tr>
+    </table>
+    <input type="submit" value="削除する" class="button">
+    <a href="/" class="button">一覧へ戻る</a>
+  </form>
+</div>
 
 {%endblock%}

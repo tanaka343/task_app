@@ -1,26 +1,27 @@
 {% extends "base.html" %}
 {%block content%}
 <h1>新規登録</h1>
-<form method="POST">
-  <table border="1">
-    <tr>
-      <th>タイトル</th>
-      <th>内容</th>
-      <th>期日</th>
-      <th>ステータス</th>
-    </tr>
-      <td><input type="text" name="title" required></td>
-      <td><input type="text" name="content"></td>
-      <td><input type="date" name="due_date"></td>
-      <td>
-        <select name="completed" id="">
-          <option value="0">未完了</option>
-          <option value="1" >完了</option>
-        </select>
-      </td>
-  </table>
-  <input type="submit" value="登録する">
-  <a href="/">一覧へ戻る</a>
-</form>
-
+<div class="task">
+  <form method="POST">
+    <table border="1">
+      <tr>
+        <th>タイトル</th>
+        <th>内容</th>
+        <th>期日</th>
+        <th>ステータス</th>
+      </tr>
+        <td><input type="text" name="title" required></td>
+        <td><input type="text" name="content"></td>
+        <td><input type="date" name="due_date"></td>
+        <td>
+          <select name="completed" id="">
+            <option value="0">未完了</option>
+            <option value="1" >完了</option>
+          </select>
+        </td>
+    </table>
+    <input type="submit" value="登録する" class="button">
+    <a href="/" class="button">一覧へ戻る</a>
+  </form>
+</div>
 {%endblock%}

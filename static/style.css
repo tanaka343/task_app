@@ -2,15 +2,25 @@ body{
   margin: 0 20px;
   font-size: 15px;
 }
+a{
+  text-decoration: none;
+}
+
+.task{
+  margin:auto;
+  max-width: 1200px;
+}
 table{
   border-collapse: collapse;
   width: 100%;
+  font-size: 1rem;
   margin-top: 0.2em;
 }
 th,td{
   border:2px solid #fff;
   background-color: #e6f1f6;
-  padding: 1em 0.5rem;
+  font-size: 1rem;
+  padding: 1em ;
 }
 th{
   background-color: #4d96bc;
@@ -19,26 +29,38 @@ th{
 }
 h1{
   text-align: center;
-  font-size: 2.5em;
+  font-size: 2.5rem;
 }
-form>a,input[type="submit"], h1 + a,button{
-  font-size: 0.9em;
+
+.button{
+  font-size: 0.9rem;
   padding: 0.2em 1em;
   border: none;
   border-radius: 0.5em;
   background-color:#e7e2e2 ;
   margin-top: 0.2em;
-  text-decoration: none;
+  color: black; 
 }
-button:hover,form>a:hover,input[type="submit"]:hover,h1 + a:hover{
+
+.button:hover{
   background-color: #a6a4a1;
   color :#fff;
 }
 table a{
- 
+  font-size: 1rem;
   margin-left: 0.5em;
+  
+}
+table input,select{
+  width: 100%;
+  padding: 5px ;
+  border: 2px solid #ddd;
+  box-sizing: border-box;
 }
 
 .red{
   color: rgb(238, 34, 34);
+}
+.done,.done a{
+  color:#aeaead
 }
