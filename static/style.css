@@ -14,7 +14,7 @@ table{
   border-collapse: collapse;
   width: 100%;
   font-size: 1rem;
-  margin-top: 0.2em;
+  margin-top: 0.5em;
 }
 th,td{
   border:2px solid #fff;
@@ -38,14 +38,43 @@ h1{
   border: none;
   border-radius: 0.5em;
   background-color:#e7e2e2 ;
-  margin-top: 0.2em;
+  margin-top: 0.4em;
   color: black; 
+}
+.button-primary{
+  font-size: 1.2rem;
+  padding: 0.3em 3em;
+  border: none;
+  border-radius: 0.5em;
+  background-color:#52a5ee ;
+  margin-top: 0.2em;
+  color:#fff; 
+}
+
+.button-right{
+  text-align: right;
+  margin-right: 0.3rem;
+}
+.button-container{
+  display: flex;
+  justify-content: center;
+ 
+  position: relative;
+}
+.button-left{
+  position: absolute;
+  left: 0;
 }
 
 .button:hover{
   background-color: #a6a4a1;
   color :#fff;
 }
+.button-primary:hover{
+  background-color: #0b6abe;
+  color: #fff;
+}
+
 table a{
   font-size: 1rem;
   margin-left: 0.5em;

@@ -2,7 +2,9 @@
 {%block content%}
 <h1>タスク管理アプリ</h1>
 <div class="task">
-  <a href="/regist" class="button">新規登録</a>
+  <div class="button-right">
+    <a href="/regist" class="button-primary">新規登録</a>
+  </div>
   <form action="/delete_all" method="post">
     
       <table border="1">
@@ -35,7 +37,7 @@
         {% endfor %}
       </table>
     
-    <button class="button">一括削除</button>
+    <button class="button">選択したタスクを削除</button>
   </form>
 </div>
 {% endblock %}
