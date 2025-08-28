@@ -15,7 +15,7 @@ def top():
     - index.htmlにタスクリストを渡す
     """
     create_table()
-    # insert_data()
+    
     task_list =get_db().execute("select id,title,content,due_date,completed from tasks").fetchall()
     return render_template("index.html",task_list=task_list)
 
@@ -166,7 +166,7 @@ if __name__=="__main__":
     # with app.app_context():
     #     create_table()
     
-        # insert_data()
+        
     app.run()
     
     
