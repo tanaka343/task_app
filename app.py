@@ -160,16 +160,6 @@ def create_table():
     con.commit()
     con.close()
 
-#--- テストデータの挿入---
-def insert_data():
-    con = sqlite3.connect(DATABASE)
-    title="買い物"
-    content="バナナ買う"
-    due_date="6/24"
-    completed=1
-    con.execute("INSERT INTO tasks (title,content,due_date,completed) values(?,?,?,?)",[title,content,due_date,completed])
-    con.commit()
-    con.close()
 
 #--- 実行部分 ---
 if __name__=="__main__":
