@@ -1,59 +1,57 @@
-from fastapi import FastAPI
+from fastapi import FastAPI,Depends
 from schemas import ItemCreate,ItemResponse
 from typing import Optional
+from models import Item
+from database import get_db
+from sqlalchemy.orm import Session
 
 app = FastAPI()
 
-class Item:
-    def __init__(
-            self,
-            id        : int,
-            title     : str,
-            content   : str,
-            due_date  : str,
-            completed : bool
-    ):
-        self.id = id
-        self.title = title
-        self.content = content
-        self.due_date = due_date
-        self.completed = completed
+# class Item:
+#     def __init__(
+#             self,
+#             id        : int,
+#             title     : str,
+#             content   : str,
+#             due_date  : str,
+#             completed : bool
+#     ):
+#         self.id = id
+#         self.title = title
+#         self.content = content
+#         self.due_date = due_date
+#         self.completed = completed
 
-items =[
-    Item(1,"kaimono","abokado","2025-10-26",False),
-    Item(2,"kaimono","tamago","2025-10-26",False),
-    Item(3,"kaimono","banana","2025-10-26",False)
-]
+# items =[
+#     Item(1,"kaimono","abokado","2025-10-26",False),
+#     Item(2,"kaimono","tamago","2025-10-26",False),
+#     Item(3,"kaimono","banana","2025-10-26",False)
+# ]
 
 
-@app.get("/items0",response_model=list[ItemResponse])
-def find_all():
-    return items
+@app.get("/items",response_model=list[ItemResponse])
+def find_all(db :Session = Depends(get_db)):
+    return db.query(Item).all()
 
 @app.get("/items/{id}",response_model=Optional[ItemResponse])
-def find_by_id(id :int):
-    for item in items:
-        if item.id == id:
-            return item
+def find_by_id(id :int,db :Session = Depends(get_db)):
+    return db.query(Item).filter(Item.id == id).first()
         
-@app.get("/items/",response_model=Optional[ItemResponse])
-def find_by_due(due_date :str):
-    filterd_item=[]
-    for item in items:
-        if item.due_date ==due_date:
-            filterd_item.append(item)
-    return filterd_item
+# @app.get("/items/",response_model=Optional[ItemResponse])
+# def find_by_due(due_date :str):
+#     filterd_item=[]
+#     for item in items:
+#         if item.due_date ==due_date:
+#             filterd_item.append(item)
+#     return filterd_item
 
 @app.post("/items",response_model=ItemResponse)
-def create(create_item :ItemCreate):
+def create(create_item :ItemCreate,db :Session = Depends(get_db)):
     new_item= Item(
-        len(items)+1,
-        create_item.title,
-        create_item.content,
-        create_item.due_date,
-        create_item.completed
+        **create_item.model_dump()
     )
-    items.append(new_item)
+    db.add(new_item)
+    db.commit()
     return new_item
 
 
