@@ -36,14 +36,12 @@ def find_all(db :Session = Depends(get_db)):
 @app.get("/items/{id}",response_model=Optional[ItemResponse])
 def find_by_id(id :int,db :Session = Depends(get_db)):
     return db.query(Item).filter(Item.id == id).first()
+
         
-# @app.get("/items/",response_model=Optional[ItemResponse])
-# def find_by_due(due_date :str):
-#     filterd_item=[]
-#     for item in items:
-#         if item.due_date ==due_date:
-#             filterd_item.append(item)
-#     return filterd_item
+@app.get("/items/",response_model=list[ItemResponse])
+def find_by_due(due_date :str,db :Session=Depends(get_db)):
+    return db.query(Item).filter(Item.due_date == due_date).all()
+
 
 @app.post("/items",response_model=ItemResponse)
 def create(create_item :ItemCreate,db :Session = Depends(get_db)):
