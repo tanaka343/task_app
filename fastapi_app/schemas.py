@@ -12,7 +12,7 @@ class ItemCreate(BaseModel):
 class ItemResponse(BaseModel):
         title     : str = Field(min_length=2,max_length=20,examples=["買い物"])
         content   : str = Field(min_length=2,max_length=20,examples=["アボカド"])
-        due_date  : date = Field(examples=["2025-10-26"])
+        due_date  : Optional[date] = Field(default=None,examples=["2025-10-26"])
         completed : bool = Field(examples=[False])
 
         model_config = ConfigDict(from_attributes=True)
