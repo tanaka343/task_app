@@ -1,5 +1,6 @@
 from pydantic import BaseModel,Field,ConfigDict
 from datetime import date
+from typing import Optional
 
 
 class ItemCreate(BaseModel):
@@ -10,6 +11,7 @@ class ItemCreate(BaseModel):
 
 
 class ItemResponse(BaseModel):
+        id : int
         title     : str = Field(min_length=2,max_length=20,examples=["買い物"])
         content   : str = Field(min_length=2,max_length=20,examples=["アボカド"])
         due_date  : Optional[date] = Field(default=None,examples=["2025-10-26"])
