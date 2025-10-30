@@ -44,14 +44,10 @@ def find_by_due(due_date :str = Query(example="2025-10-30"),end :Optional[int] =
     if end is None:
         return db.query(Item).filter(Item.due_date == due_date).all()
     else:
-        tasklist=[]
         from_dt = date.fromisoformat(due_date)
-        # to_dt = from_dt + timedelta(days=end)
-        # return db.query(Item).filter(from_dt <= Item.due_date <=to_dt).all()
-        for i in range(end+1):
-            due = from_dt +timedelta(days=i)
-            tasklist.extend(db.query(Item).filter(Item.due_date==due).all())
-        return tasklist
+        to_dt = from_dt +timedelta(days=end)
+        return db.query(Item).filter(Item.due_date.between(from_dt,to_dt)).order_by(Item.due_date).all()
+
 
 @app.post("/items",response_model=ItemResponse)
 def create(create_item :ItemCreate,db :Session = Depends(get_db)):
