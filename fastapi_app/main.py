@@ -48,6 +48,15 @@ def find_by_due(due_date :str = Query(example="2025-10-30"),end :Optional[int] =
         to_dt = from_dt +timedelta(days=end)
         return db.query(Item).filter(Item.due_date.between(from_dt,to_dt)).order_by(Item.due_date).all()
 
+@app.get("/items/today",response_model=list[ItemResponse])
+def find_by_due_fromtoday(end :Optional[int] = Query(default=None,example=7),db : Session=Depends(get_db)):
+    today = date.today()
+    if end is None:
+        return db.query(Item).filter(Item.due_date == today.date()).all()
+    else:
+        to_dt = today + timedelta(days=end)
+        return db.query(Item).filter(Item.due_date.between(today,to_dt)).order_by(Item.due_date).all()
+    
 
 @app.post("/items",response_model=ItemResponse)
 def create(create_item :ItemCreate,db :Session = Depends(get_db)):
