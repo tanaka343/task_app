@@ -40,7 +40,7 @@ def find_by_id(id :int,db :Session = Depends(get_db)):
 
 
 @app.get("/items/",response_model=list[ItemResponse])
-def find_by_due(due_date :str,end :Optional[int]=None,db :Session=Depends(get_db)):
+def find_by_due(due_date :str = Query(example="2025-10-30"),end :Optional[int] = Query(default=None,example=7),db :Session=Depends(get_db)):
     if end is None:
         return db.query(Item).filter(Item.due_date == due_date).all()
     else:
