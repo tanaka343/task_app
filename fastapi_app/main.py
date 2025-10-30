@@ -1,4 +1,4 @@
-from fastapi import FastAPI,Depends
+from fastapi import FastAPI,Depends,Query
 from schemas import ItemCreate,ItemResponse
 from typing import Optional
 from models import Item
@@ -34,9 +34,6 @@ app = FastAPI()
 def find_all(db :Session = Depends(get_db)):
     return db.query(Item).all()
 
-@app.get("/items/{id}",response_model=Optional[ItemResponse])
-def find_by_id(id :int,db :Session = Depends(get_db)):
-    return db.query(Item).filter(Item.id == id).first()
 
 
 @app.get("/items/",response_model=list[ItemResponse])
@@ -48,6 +45,10 @@ def find_by_due(due_date :str = Query(example="2025-10-30"),end :Optional[int] =
         to_dt = from_dt +timedelta(days=end)
         return db.query(Item).filter(Item.due_date.between(from_dt,to_dt)).order_by(Item.due_date).all()
 
+
+
+
+
 @app.get("/items/today",response_model=list[ItemResponse])
 def find_by_due_fromtoday(end :Optional[int] = Query(default=None,example=7),db : Session=Depends(get_db)):
     today = date.today()
@@ -58,6 +59,12 @@ def find_by_due_fromtoday(end :Optional[int] = Query(default=None,example=7),db 
         return db.query(Item).filter(Item.due_date.between(today,to_dt)).order_by(Item.due_date).all()
     
 
+@app.get("/items/{id}",response_model=Optional[ItemResponse])
+def find_by_id(id :int,db :Session = Depends(get_db)):
+    return db.query(Item).filter(Item.id == id).first()
+
+
+
 @app.post("/items",response_model=ItemResponse)
 def create(create_item :ItemCreate,db :Session = Depends(get_db)):
     new_item= Item(
@@ -66,18 +73,6 @@ def create(create_item :ItemCreate,db :Session = Depends(get_db)):
     db.add(new_item)
     db.commit()
     return new_item
-
-
-# @app.get("/items/", response_model=list[ItemResponse])
-# def find_by_due(due_date: str, end: Optional[int] = None, db: Session = Depends(get_db)):
-#     from_dt = date.fromisoformat(due_date)
-
-#     if end is None:
-#         return db.query(Item).filter(Item.due_date == from_dt).all()
-#     else:
-#         to_dt = from_dt + timedelta(days=end)
-#         # ✅ SQLAlchemyの between を使う！
-#         return db.query(Item).filter(Item.due_date.between(from_dt, to_dt)).all()
 
 
 
