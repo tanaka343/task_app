@@ -1,4 +1,4 @@
-from fastapi import FastAPI,Depends,Query
+from fastapi import FastAPI,Depends,Query,HTTPException
 from schemas import ItemCreate,ItemResponse
 from typing import Optional
 from models import Item
@@ -38,12 +38,20 @@ def find_all(db :Session = Depends(get_db)):
 
 @app.get("/items/",response_model=list[ItemResponse])
 def find_by_due(due_date :str = Query(example="2025-10-30"),end :Optional[int] = Query(default=None,example=7),db :Session=Depends(get_db)):
-    if end is None:
-        return db.query(Item).filter(Item.due_date == due_date).all()
-    else:
+    try:    
         from_dt = date.fromisoformat(due_date)
+    except ValueError:
+        raise HTTPException(status_code=400,detail="nvalid date format. Use YYYY-MM-DD")
+
+    if end is None:
+        found_items = db.query(Item).filter(Item.due_date == from_dt).all()
+    else: 
         to_dt = from_dt +timedelta(days=end)
-        return db.query(Item).filter(Item.due_date.between(from_dt,to_dt)).order_by(Item.due_date).all()
+        found_items = db.query(Item).filter(Item.due_date.between(from_dt,to_dt)).order_by(Item.due_date).all()
+    if not found_items:
+        raise HTTPException(status_code=404,detail="Task not found")
+    
+    return found_items
 
 
 
@@ -53,16 +61,21 @@ def find_by_due(due_date :str = Query(example="2025-10-30"),end :Optional[int] =
 def find_by_due_fromtoday(end :Optional[int] = Query(default=None,example=7),db : Session=Depends(get_db)):
     today = date.today()
     if end is None:
-        return db.query(Item).filter(Item.due_date == today.date()).all()
+        found_items = db.query(Item).filter(Item.due_date == today.date()).all()
     else:
         to_dt = today + timedelta(days=end)
-        return db.query(Item).filter(Item.due_date.between(today,to_dt)).order_by(Item.due_date).all()
+        found_items = db.query(Item).filter(Item.due_date.between(today,to_dt)).order_by(Item.due_date).all()
     
+    if not found_items:
+        raise HTTPException(status_code=404,detail="Task not found")
+    return found_items
 
 @app.get("/items/{id}",response_model=Optional[ItemResponse])
 def find_by_id(id :int,db :Session = Depends(get_db)):
-    return db.query(Item).filter(Item.id == id).first()
-
+    found_item = db.query(Item).filter(Item.id == id).first()
+    if not found_item:
+        raise HTTPException(status_code=404,detail="Task not found")
+    return found_item
 
 
 @app.post("/items",response_model=ItemResponse)
