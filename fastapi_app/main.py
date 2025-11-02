@@ -9,27 +9,6 @@ from starlette import status
 
 app = FastAPI()
 
-# class Item:
-#     def __init__(
-#             self,
-#             id        : int,
-#             title     : str,
-#             content   : str,
-#             due_date  : str,
-#             completed : bool
-#     ):
-#         self.id = id
-#         self.title = title
-#         self.content = content
-#         self.due_date = due_date
-#         self.completed = completed
-
-# items =[
-#     Item(1,"kaimono","abokado","2025-10-26",False),
-#     Item(2,"kaimono","tamago","2025-10-26",False),
-#     Item(3,"kaimono","banana","2025-10-26",False)
-# ]
-
 
 @app.get("/items",response_model=list[ItemResponse],status_code=status.HTTP_200_OK)
 def find_all(db :Session = Depends(get_db)):
