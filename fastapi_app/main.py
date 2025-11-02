@@ -5,6 +5,7 @@ from models import Item
 from database import get_db
 from sqlalchemy.orm import Session
 from datetime import date,timedelta
+from starlette import status
 
 app = FastAPI()
 
@@ -30,13 +31,13 @@ app = FastAPI()
 # ]
 
 
-@app.get("/items",response_model=list[ItemResponse])
+@app.get("/items",response_model=list[ItemResponse],status_code=status.HTTP_200_OK)
 def find_all(db :Session = Depends(get_db)):
     return db.query(Item).all()
 
 
 
-@app.get("/items/",response_model=list[ItemResponse])
+@app.get("/items/",response_model=list[ItemResponse],status_code=status.HTTP_200_OK)
 def find_by_due(due_date :str = Query(example="2025-10-30"),end :Optional[int] = Query(default=None,example=7),db :Session=Depends(get_db)):
     try:    
         from_dt = date.fromisoformat(due_date)
@@ -57,7 +58,7 @@ def find_by_due(due_date :str = Query(example="2025-10-30"),end :Optional[int] =
 
 
 
-@app.get("/items/today",response_model=list[ItemResponse])
+@app.get("/items/today",response_model=list[ItemResponse],status_code=status.HTTP_200_OK)
 def find_by_due_fromtoday(end :Optional[int] = Query(default=None,example=7),db : Session=Depends(get_db)):
     today = date.today()
     if end is None:
@@ -70,7 +71,8 @@ def find_by_due_fromtoday(end :Optional[int] = Query(default=None,example=7),db 
         raise HTTPException(status_code=404,detail="Task not found")
     return found_items
 
-@app.get("/items/{id}",response_model=Optional[ItemResponse])
+
+@app.get("/items/{id}",response_model=Optional[ItemResponse],status_code=status.HTTP_200_OK)
 def find_by_id(id :int,db :Session = Depends(get_db)):
     found_item = db.query(Item).filter(Item.id == id).first()
     if not found_item:
@@ -78,7 +80,7 @@ def find_by_id(id :int,db :Session = Depends(get_db)):
     return found_item
 
 
-@app.post("/items",response_model=ItemResponse)
+@app.post("/items",response_model=ItemResponse,status_code=status.HTTP_201_CREATED)
 def create(create_item :ItemCreate,db :Session = Depends(get_db)):
     new_item= Item(
         **create_item.model_dump()
@@ -88,7 +90,7 @@ def create(create_item :ItemCreate,db :Session = Depends(get_db)):
     return new_item
 
 
-@app.put("/items/{id}",response_model=ItemResponse)
+@app.put("/items/{id}",response_model=ItemResponse,status_code=status.HTTP_200_OK)
 def update(update_item :ItemUpdate,id :int,db :Session =Depends(get_db)):
     item = db.query(Item).filter(Item.id == id).first()
     if not item:
@@ -103,7 +105,7 @@ def update(update_item :ItemUpdate,id :int,db :Session =Depends(get_db)):
     db.commit()
     return item
 
-@app.delete("/items/{id}")
+@app.delete("/items/{id}",status_code=status.HTTP_200_OK)
 def delete(id :int,db :Session = Depends(get_db)):
     item = db.query(Item).filter(Item.id == id).first()
     if not item:
