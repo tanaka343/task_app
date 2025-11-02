@@ -1,5 +1,5 @@
 from fastapi import FastAPI,Depends,Query,HTTPException
-from schemas import ItemCreate,ItemResponse
+from schemas import ItemCreate,ItemResponse,ItemUpdate
 from typing import Optional
 from models import Item
 from database import get_db
@@ -88,6 +88,29 @@ def create(create_item :ItemCreate,db :Session = Depends(get_db)):
     return new_item
 
 
+@app.put("/items/{id}",response_model=ItemResponse)
+def update(update_item :ItemUpdate,id :int,db :Session =Depends(get_db)):
+    item = db.query(Item).filter(Item.id == id).first()
+    if not item:
+        raise HTTPException(status_code=404,detail="Task not found")
+
+    item.title = item.title if update_item.title is None else update_item.title
+    item.content = item.content if update_item.content is None else update_item.content
+    item.due_date = item.due_date if update_item.due_date is None else update_item.due_date
+    item.completed = item.completed if update_item.completed is None else update_item.completed
+
+    db.add(item)
+    db.commit()
+    return item
+
+@app.delete("/items/{id}")
+def delete(id :int,db :Session = Depends(get_db)):
+    item = db.query(Item).filter(Item.id == id).first()
+    if not item:
+        raise HTTPException(status_code=404,detail="Task not found")
+    db.delete(item)
+    db.commit()
+    return item
 
     
 
