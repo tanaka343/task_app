@@ -17,7 +17,7 @@ def find_all(db :Session = Depends(get_db)):
 
 
 @app.get("/items/",response_model=list[ItemResponse],status_code=status.HTTP_200_OK)
-def find_by_due(due_date :str = Query(example="2025-10-30"),end :Optional[int] = Query(default=None,example=7),db :Session=Depends(get_db)):
+def find_by_due(due_date :str = Query(examples=["2025-10-30"]),end :Optional[int] = Query(default=None,examples=[7]),db :Session=Depends(get_db)):
     try:    
         from_dt = date.fromisoformat(due_date)
     except ValueError:
@@ -38,7 +38,7 @@ def find_by_due(due_date :str = Query(example="2025-10-30"),end :Optional[int] =
 
 
 @app.get("/items/today",response_model=list[ItemResponse],status_code=status.HTTP_200_OK)
-def find_by_due_fromtoday(end :Optional[int] = Query(default=None,example=7),db : Session=Depends(get_db)):
+def find_by_due_fromtoday(end :Optional[int] = Query(default=None,examples=[7]),db : Session=Depends(get_db)):
     today = date.today()
     if end is None:
         found_items = db.query(Item).filter(Item.due_date == today.date()).all()
