@@ -9,6 +9,7 @@ FastAPIとSQLAlchemyを使用したタスク管理APIです。学習用のため
 - 今日から指定日数後までのタスク取得
 - 自動生成されるAPIドキュメント（Swagger UI）
 - データベースマイグレーション管理（Alembic）
+- APIテスト（pytest）
 
 ## 技術スタック
 
@@ -16,13 +17,15 @@ FastAPI\
 SQLAlchemy（ORM）\
 Alembic（マイグレーション）\
 SQLite\
-Pydantic（バリデーション）
+Pydantic（バリデーション）\
+pytest（テスト）
 
 ## ファイル構成
 
 ```python
 fastapi_app/
-├── migrations/         # Alembicマイグレーションファイル
+├── migrations/        # Alembicマイグレーションファイル
+├── tests/             # テストファイル
 ├── __init__.py
 ├── alembic.ini        # Alembic設定
 ├── database.py        # データベース接続
@@ -65,6 +68,15 @@ uvicorn main:app --reload
 
 - **API**: <http://localhost:8000>
 - **Swagger UI**: <http://localhost:8000/docs>
+
+### テストの実行
+```bash
+pytest tests/test_main.py
+```
+
+- fixtureを使ったテスト用データベースのセットアップ
+- 各エンドポイントの正常系テスト
+- 各エンドポイントの異常系テスト
 
 ## API仕様
 
@@ -175,3 +187,5 @@ DELETE /items/{id}
 Pydanticスキーマにより、リクエストとレスポンスのデータが自動的に検証されます。
 - 自動ドキュメント生成\
 Swagger UIにより、APIの仕様とテストが簡単に行えます。
+- APIテストの実装
+fixtureを使ってテスト用データベースのセットアップを行い、各エンドポイントの正常系・異常系テストを作成しました。
