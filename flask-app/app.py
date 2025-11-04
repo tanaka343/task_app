@@ -4,7 +4,8 @@ import sqlite3
 import os
 
 app = Flask(__name__)
-DATABASE = "database.db"
+
+DATABASE = os.path.join(os.path.dirname(os.path.dirname(__file__)),"database.db")
 
 @app.route("/")
 def top():
