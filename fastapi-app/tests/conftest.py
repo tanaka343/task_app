@@ -25,7 +25,8 @@ def session_fixture():
     db = SessionLocal()
 
     try:
-        task1 = Item(title="kaimono1",content="milk",due_date=date(2025,10,30),completed=False)
+        today = date.today()
+        task1 = Item(title="kaimono1",content="milk",due_date=today,completed=False)
         task2 = Item(title="kaimono2",content="pasta",due_date=date(2025,10,30),completed=False)
         db.add(task1)
         db.add(task2)
