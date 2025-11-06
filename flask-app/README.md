@@ -48,7 +48,7 @@ flask_app/
 ### 依存パッケージのインストール
 
 ```bash
-bashpip install -r requirements.txt
+pip install -r requirements.txt
 ```
 
 データベースは初回実行時に自動的に作成されます。
