@@ -11,16 +11,16 @@
         <th>ステータス</th>
       </tr>
       <tr class="red">
-        <td>{{post.title}}</td>
-        <td>{{post.content}}</td>
-        <td>{{post.due_date}}</td>
+        <td>{{task.title}}</td>
+        <td>{{task.content}}</td>
+        <td>{{task.due_date}}</td>
         <td>
-          {% if post.completed==0 %}
+          {% if task.completed==0 %}
           未完了
           {% else %}
           完了
           {% endif %}
-          <!-- <input type="text" name="completed" value="{{post.completed}}"> -->
+          <!-- <input type="text" name="completed" value="{{task.completed}}"> -->
         </td>
       </tr>
     </table>

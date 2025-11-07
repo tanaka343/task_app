@@ -62,8 +62,8 @@ def edit(id):
         get_db().commit()
         return redirect('/')
     #GETの場合、idを指定してDBから情報を取得し、編集フォームへ表示
-    post =get_db().execute("select id,title,content,due_date,completed from tasks where id=?",(id,)).fetchone()
-    return render_template("edit.html",post=post)
+    task =get_db().execute("select id,title,content,due_date,completed from tasks where id=?",(id,)).fetchone()
+    return render_template("edit.html",task=task)
 
 #--- タスク削除 ---
 @app.route("/<id>/delete",methods=['GET','POST'])
@@ -81,8 +81,8 @@ def delete(id):
         return redirect('/')
     
     #GETの場合、idを指定してDBから情報を取得し、確認画面表示
-    post =get_db().execute("select id,title,content,due_date,completed from tasks where id=?",(id,)).fetchone()
-    return render_template("delete.html",post=post)
+    task =get_db().execute("select id,title,content,due_date,completed from tasks where id=?",(id,)).fetchone()
+    return render_template("delete.html",task=task)
     
 
 #--- タスク一括削除　---
@@ -91,21 +91,21 @@ def delete_all():
     """
     タスク一括削除確認ページ
 
-    - GET: post_list=[]の場合のHTMLを表示
+    - GET: task_list=[]の場合のHTMLを表示
     - POST: TOPのフォームから受け取った複数のタスクIDを使ってDBからデータを取得し、
             確認ページに一覧表示する
             ※複数IDをBodyに入れて送るためPOST
     """
     #POSTの場合、フォームから複数IDを取得しBodyに情報を入れて送信、DBから情報を取得し、確認ページを表示
-    post_list=[]
+    task_list=[]
     if request.method=='POST':
         id_list =request.form.getlist('delete_all')#name='delete_allの要素のvalueをリストにして返す
         if id_list is not None:
             for id in id_list:
-                post_list.append(get_db().execute("select id,title,content,due_date,completed from tasks where id=?",(id,)).fetchone())
+                task_list.append(get_db().execute("select id,title,content,due_date,completed from tasks where id=?",(id,)).fetchone())
 
-    #GETの場合、post_list=[]の場合のHTMLを表示        
-    return render_template("delete_all.html",post_list=post_list)
+    #GETの場合、task_list=[]の場合のHTMLを表示        
+    return render_template("delete_all.html",task_list=task_list)
 
 @app.route("/deletes",methods=['GET','POST'])
 def deletes():

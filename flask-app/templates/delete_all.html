@@ -1,7 +1,7 @@
 {% extends "base.html" %}
 {%block content%}
 <h1>一括削除</h1>
-{% if post_list==[] %}
+{% if task_list==[] %}
 <p>タスクが選択されていません</p>
 {% else %}
 <div class="task">
@@ -14,16 +14,16 @@
         <th>期日</th>
         <th>ステータス</th>
       </tr> 
-      {% for post in post_list %}
+      {% for task in task_list %}
         <tr class="red">
           <td>
-            <input type="hidden" name="deletes" value="{{post.id}}" >
+            <input type="hidden" name="deletes" value="{{task.id}}" >
           </td>
-          <td>{{post.title}}</td>
-          <td>{{post.content}}</td>
-          <td>{{post.due_date}}</td>
+          <td>{{task.title}}</td>
+          <td>{{task.content}}</td>
+          <td>{{task.due_date}}</td>
           <td >
-          {% if post.completed==0 %}
+          {% if task.completed==0 %}
           未完了
           {% else %}
           完了
