@@ -11,13 +11,13 @@
         <th>ステータス</th>
       </tr>
       <tr>
-        <td><input type="text" name="title" value="{{post.title}}"></td>
-        <td><input type="text" name="content" value="{{post.content}}"></td>
-        <td><input type="date" name="due_date" value="{{post.due_date}}"></td>
+        <td><input type="text" name="title" value="{{task.title}}"></td>
+        <td><input type="text" name="content" value="{{task.content}}"></td>
+        <td><input type="date" name="due_date" value="{{task.due_date}}"></td>
         <td>
           <select name="completed">
-            <option value="0" {% if post.completed==0 %}selected{% endif %}>未完了</option>
-            <option value="1" {% if post.completed==1 %}selected{% endif %}>完了</option>
+            <option value="0" {% if task.completed==0 %}selected{% endif %}>未完了</option>
+            <option value="1" {% if task.completed==1 %}selected{% endif %}>完了</option>
           </select>
         </td>
       </tr>

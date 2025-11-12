@@ -4,7 +4,8 @@ import sqlite3
 import os
 
 app = Flask(__name__)
-DATABASE = "database.db"
+
+DATABASE = os.path.join(os.path.dirname(os.path.dirname(__file__)),"database.db")
 
 @app.route("/")
 def top():
@@ -27,7 +28,9 @@ def regist():
     タスク登録ページ
     - GET: 空の登録フォーム表示
     - POST: フォームからタスク情報を取得してDBに登録
+            更新後はトップページに自動でリダイレクト
     """
+    #POSTの場合、フォームから情報を取得してDBに登録
     if request.method == 'POST':
         title =request.form.get('title')
         content =request.form.get('content')
@@ -36,7 +39,7 @@ def regist():
         get_db().execute("INSERT INTO tasks (title,content,due_date,completed) values(?,?,?,?)",[title,content,due_date,completed])
         get_db().commit()
         return redirect('/')
-    
+    #GETの場合そのまま返す
     return render_template("regist.html")
 
 #--- タスク編集 ---
@@ -49,6 +52,7 @@ def edit(id):
     - POST: フォームから取得した値でDBを更新し、
             更新後はトップページに自動でリダイレクト
     """
+    #POSTの場合、フォームから情報を取得してDBに登録
     if request.method == 'POST':
         title =request.form.get('title')
         content =request.form.get('content')
@@ -57,8 +61,9 @@ def edit(id):
         get_db().execute("update tasks set title=?, content=?,due_date=?,completed=? where id=?",[title,content,due_date,completed,id])
         get_db().commit()
         return redirect('/')
-    post =get_db().execute("select id,title,content,due_date,completed from tasks where id=?",(id,)).fetchone()
-    return render_template("edit.html",post=post)
+    #GETの場合、idを指定してDBから情報を取得し、編集フォームへ表示
+    task =get_db().execute("select id,title,content,due_date,completed from tasks where id=?",(id,)).fetchone()
+    return render_template("edit.html",task=task)
 
 #--- タスク削除 ---
 @app.route("/<id>/delete",methods=['GET','POST'])
@@ -66,15 +71,18 @@ def delete(id):
     """
     タスク削除ページ
 
-    - GET: 指定IDのタスクを取得して確認ページ表示
+    - GET: 指定IDのタスクを取得して確認画面表示
     - POST: 指定IDのタスクを削除し、トップページに自動リダイレクト
     """
+    #POSTの場合idを指定してDBからデータ削除
     if request.method=='POST':
         get_db().execute("delete from tasks where id=?",(id,))
         get_db().commit()
         return redirect('/')
-    post =get_db().execute("select id,title,content,due_date,completed from tasks where id=?",(id,)).fetchone()
-    return render_template("delete.html",post=post)
+    
+    #GETの場合、idを指定してDBから情報を取得し、確認画面表示
+    task =get_db().execute("select id,title,content,due_date,completed from tasks where id=?",(id,)).fetchone()
+    return render_template("delete.html",task=task)
     
 
 #--- タスク一括削除　---
@@ -83,35 +91,41 @@ def delete_all():
     """
     タスク一括削除確認ページ
 
-    - POST: フォームから受け取った複数のタスクIDを使ってDBからデータを取得し、
+    - GET: task_list=[]の場合のHTMLを表示
+    - POST: TOPのフォームから受け取った複数のタスクIDを使ってDBからデータを取得し、
             確認ページに一覧表示する
+            ※複数IDをBodyに入れて送るためPOST
     """
-    post_list=[]
+    #POSTの場合、フォームから複数IDを取得しBodyに情報を入れて送信、DBから情報を取得し、確認ページを表示
+    task_list=[]
     if request.method=='POST':
         id_list =request.form.getlist('delete_all')#name='delete_allの要素のvalueをリストにして返す
         if id_list is not None:
             for id in id_list:
-                post_list.append(get_db().execute("select id,title,content,due_date,completed from tasks where id=?",(id,)).fetchone())
-            
-    return render_template("delete_all.html",post_list=post_list)
+                task_list.append(get_db().execute("select id,title,content,due_date,completed from tasks where id=?",(id,)).fetchone())
+
+    #GETの場合、task_list=[]の場合のHTMLを表示        
+    return render_template("delete_all.html",task_list=task_list)
 
 @app.route("/deletes",methods=['GET','POST'])
 def deletes():
     """
     タスク一括削除処理
 
-    - POST: フォームから受け取った複数のタスクIDを取得し、
+    - POST: タスク一括削除確認ページのフォームから複数のタスクIDを取得し、
             ループでそれぞれのタスクをデータベースから削除。
             削除完了後はトップページにリダイレクトする。
 
     - GET: URLから直接アクセスの場合は、特に処理せず、トップページにリダイレクトする。
     """
+    #POSTの場合、フォームから複数のIDを取得しDBから削除
     if request.method=='POST':
         id_list=request.form.getlist('deletes')
         for id in id_list:
             get_db().execute("delete from tasks where id=?",(id,))
         get_db().commit()
     
+    #GETの場合、TOPページを表示
     return redirect('/')
 
 #--- データベース作成、接続 ---
@@ -163,9 +177,6 @@ def create_table():
 
 #--- 実行部分 ---
 if __name__=="__main__":
-    # with app.app_context():
-    #     create_table()
-    
         
     app.run()
     
