@@ -28,7 +28,7 @@ def find_all(db :DbDependency):
 
 
 @app.get("/items/",response_model=list[ItemResponse],status_code=status.HTTP_200_OK)
-def find_by_due(db :DbDependency,due_date :str = Query(examples=["2025-10-30"]),end :Optional[int] = Query(default=None,examples=[7])):
+def find_by_due(db :DbDependency,due_date :str = Query(example="2025-10-30"),end :Optional[int] = Query(default=None,example=7)):
     """期限日でタスクを検索
     
     指定した期限日、または期限日から指定日数範囲内のタスクを取得します。
@@ -65,7 +65,7 @@ def find_by_due(db :DbDependency,due_date :str = Query(examples=["2025-10-30"]),
 
 
 @app.get("/items/today",response_model=list[ItemResponse],status_code=status.HTTP_200_OK)
-def find_by_due_fromtoday(db :DbDependency,end :Optional[int] = Query(default=None,examples=[7])):
+def find_by_due_fromtoday(db :DbDependency,end :Optional[int] = Query(default=None,example=7)):
     """今日を起点に期限日でタスクを検索
     
     今日の日付を起点として、指定日数範囲内のタスクを取得します。
