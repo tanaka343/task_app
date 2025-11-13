@@ -83,7 +83,7 @@ def find_by_due_fromtoday(db :DbDependency,end :Optional[int] = Query(default=No
     """
     today = date.today()
     if end is None:
-        found_items = db.query(Item).filter(Item.due_date == today.date()).all()
+        found_items = db.query(Item).filter(Item.due_date == today).all()
     else:
         to_dt = today + timedelta(days=end)
         found_items = db.query(Item).filter(Item.due_date.between(today,to_dt)).order_by(Item.due_date).all()
