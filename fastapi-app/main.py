@@ -1,17 +1,18 @@
 from fastapi import FastAPI,Depends,Query,HTTPException
 from schemas import ItemCreate,ItemResponse,ItemUpdate
-from typing import Optional
+from typing import Optional,Annotated
 from models import Item
 from database import get_db
 from sqlalchemy.orm import Session
 from datetime import date,timedelta
 from starlette import status
 
+DbDependency = Annotated[Session,Depends(get_db)]
 app = FastAPI()
 
 
 @app.get("/items",response_model=list[ItemResponse],status_code=status.HTTP_200_OK)
-def find_all(db :Session = Depends(get_db)):
+def find_all(db :DbDependency):
     """全タスクを取得
     
     タスク管理アプリに登録されている全てのタスクを取得します。
@@ -27,7 +28,7 @@ def find_all(db :Session = Depends(get_db)):
 
 
 @app.get("/items/",response_model=list[ItemResponse],status_code=status.HTTP_200_OK)
-def find_by_due(due_date :str = Query(examples=["2025-10-30"]),end :Optional[int] = Query(default=None,examples=[7]),db :Session=Depends(get_db)):
+def find_by_due(db :DbDependency,due_date :str = Query(examples=["2025-10-30"]),end :Optional[int] = Query(default=None,examples=[7])):
     """期限日でタスクを検索
     
     指定した期限日、または期限日から指定日数範囲内のタスクを取得します。
@@ -64,7 +65,7 @@ def find_by_due(due_date :str = Query(examples=["2025-10-30"]),end :Optional[int
 
 
 @app.get("/items/today",response_model=list[ItemResponse],status_code=status.HTTP_200_OK)
-def find_by_due_fromtoday(end :Optional[int] = Query(default=None,examples=[7]),db : Session=Depends(get_db)):
+def find_by_due_fromtoday(db :DbDependency,end :Optional[int] = Query(default=None,examples=[7])):
     """今日を起点に期限日でタスクを検索
     
     今日の日付を起点として、指定日数範囲内のタスクを取得します。
@@ -93,7 +94,7 @@ def find_by_due_fromtoday(end :Optional[int] = Query(default=None,examples=[7]),
 
 
 @app.get("/items/{id}",response_model=Optional[ItemResponse],status_code=status.HTTP_200_OK)
-def find_by_id(id :int,db :Session = Depends(get_db)):
+def find_by_id(id :int,db :DbDependency):
     """IDでタスクを取得
     
     指定されたIDに一致する単一のタスクを取得します。
@@ -115,7 +116,7 @@ def find_by_id(id :int,db :Session = Depends(get_db)):
 
 
 @app.post("/items",response_model=ItemResponse,status_code=status.HTTP_201_CREATED)
-def create(create_item :ItemCreate,db :Session = Depends(get_db)):
+def create(create_item :ItemCreate,db :DbDependency):
     """新規タスクを作成
     
     リクエストボディで受け取ったデータから新しいタスクを作成します。
@@ -136,7 +137,7 @@ def create(create_item :ItemCreate,db :Session = Depends(get_db)):
 
 
 @app.put("/items/{id}",response_model=ItemResponse,status_code=status.HTTP_200_OK)
-def update(update_item :ItemUpdate,id :int,db :Session =Depends(get_db)):
+def update(update_item :ItemUpdate,id :int,db :DbDependency):
     """タスクを更新
     
     指定されたIDのタスクを部分更新します。
@@ -167,7 +168,7 @@ def update(update_item :ItemUpdate,id :int,db :Session =Depends(get_db)):
     return item
 
 @app.delete("/items/{id}",status_code=status.HTTP_200_OK)
-def delete(id :int,db :Session = Depends(get_db)):
+def delete(id :int,db :DbDependency):
     """タスクを削除
     
     指定されたIDのタスクをデータベースから完全に削除します。
