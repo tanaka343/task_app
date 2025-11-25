@@ -16,9 +16,9 @@ FormDependency = Annotated[OAuth2PasswordRequestForm,Depends()]
 async def create_user(user_create :UserCreate,db :DbDependency):
     return auth_cruds.create_user(user_create,db)
 
-@router.get("/login")
+@router.post("/login")
 async def login(db :DbDependency,form_data :FormDependency):
-    user = auth_cruds.login(form_data.username,form_data.password)
+    user = auth_cruds.login(form_data.username,form_data.password,db)
     if not user:
         raise HTTPException(status_code=401,detail="Incorrect username or password")
     token = auth_cruds.create_access_token(user.username,user.id,timedelta(minutes=20))
