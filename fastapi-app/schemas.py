@@ -72,3 +72,7 @@ class UserCreate(BaseModel):
 class UserResponse(BaseModel):
         id : int = Field(gt=0,examples=["1"])
         username : str = Field(min_length=2,examples=["user1"])
+
+class Token(BaseModel):
+        access_token : str
+        token_type : str
