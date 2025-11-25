@@ -27,8 +27,9 @@ class Item(Base):
   due_date  =Column(Date,nullable=True)
   completed = Column(Boolean,default=False)
 
-  class User(Base):
-    __tablename__ = "users"
-    id = Column(Integer,primary_key=True)
-    username = Column(String,nullable=False,unique=True)
-    password = Column(String,nullable=False)
+class User(Base):
+  __tablename__ = "users"
+  id = Column(Integer,primary_key=True)
+  username = Column(String,nullable=False,unique=True)
+  password = Column(String,nullable=False)
+  salt = Column(String,nullable=False)
