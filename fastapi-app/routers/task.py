@@ -6,21 +6,22 @@ from models import Item
 from schemas import ItemResponse,ItemCreate,ItemUpdate
 from starlette import status
 from fastapi import FastAPI,Depends,Query,HTTPException
-from schemas import ItemCreate,ItemResponse,ItemUpdate
+from schemas import ItemCreate,ItemResponse,ItemUpdate,DecodedToken
 from typing import Optional,Annotated
 from models import Item
 from database import get_db
 from sqlalchemy.orm import Session
 from datetime import date,timedelta
 from starlette import status
-from cruds import task as task_cruds
+from cruds import task as task_cruds,auth as auth_cruds
 
 router = APIRouter(prefix="/tasks",tags=["tasks"])
 
 DbDependency = Annotated[Session,Depends(get_db)]
+UserDependency = Annotated[DecodedToken,Depends(auth_cruds.get_current_user)]
 
 @router.get("",response_model=list[ItemResponse],status_code=status.HTTP_200_OK)
-async def find_all(db :DbDependency):
+async def find_all(db :DbDependency,user :UserDependency):
     """全タスクを取得
     
     タスク管理アプリに登録されている全てのタスクを取得します。
@@ -31,7 +32,7 @@ async def find_all(db :DbDependency):
     Returns:
         list[ItemResponse]: 全タスクのリスト
     """
-    return task_cruds.find_all(db)
+    return task_cruds.find_all(db,user.user_id)
 
 
 @router.get("/",response_model=list[ItemResponse],status_code=status.HTTP_200_OK)
@@ -106,7 +107,7 @@ async def find_by_id(id :int,db :DbDependency):
 
 
 @router.post("",response_model=ItemResponse,status_code=status.HTTP_201_CREATED)
-async def create(create_item :ItemCreate,db :DbDependency):
+async def create(create_item :ItemCreate,db :DbDependency,user :UserDependency):
     """新規タスクを作成
     
     リクエストボディで受け取ったデータから新しいタスクを作成します。
@@ -118,12 +119,12 @@ async def create(create_item :ItemCreate,db :DbDependency):
     Returns:
         ItemResponse: 作成されたタスク
     """
-    new_item = task_cruds.create(create_item,db)
+    new_item = task_cruds.create(create_item,db,user.user_id)
     return new_item
 
 
 @router.put("/{id}",response_model=ItemResponse,status_code=status.HTTP_200_OK)
-async def update(update_item :ItemUpdate,id :int,db :DbDependency):
+async def update(update_item :ItemUpdate,id :int,db :DbDependency,user :UserDependency):
     """タスクを更新
     
     指定されたIDのタスクを部分更新します。
@@ -140,13 +141,13 @@ async def update(update_item :ItemUpdate,id :int,db :DbDependency):
     Raises:
         HTTPException: タスクが見つからない場合（404）
     """
-    update_item = task_cruds.update(update_item,id,db)
+    update_item = task_cruds.update(update_item,id,db,user.user_id)
     if not update_item:
         raise HTTPException(status_code=404,detail="Task not found")
     return update_item
 
 @router.delete("/{id}",status_code=status.HTTP_200_OK)
-async def delete(id :int,db :DbDependency):
+async def delete(id :int,db :DbDependency,user :UserDependency):
     """タスクを削除
     
     指定されたIDのタスクをデータベースから完全に削除します。
@@ -161,7 +162,7 @@ async def delete(id :int,db :DbDependency):
     Raises:
         HTTPException: タスクが見つからない場合（404）
     """
-    delete_item = task_cruds.delete(id,db)
+    delete_item = task_cruds.delete(id,db,user.user_id)
     if not delete_item:
         raise HTTPException(status_code=404,detail="Task not found")
     return delete_item

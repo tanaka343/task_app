@@ -44,7 +44,8 @@ class ItemResponse(BaseModel):
         content   : str = Field(min_length=2,max_length=20,examples=["アボカド"])
         due_date  : Optional[date] = Field(default=None,examples=["2025-10-26"])
         completed : bool = Field(examples=[False])
-
+        user_id : int
+        
         model_config = ConfigDict(from_attributes=True)
 
 
@@ -64,6 +65,7 @@ class ItemUpdate(BaseModel):
         content   : Optional[str] = Field(default=None,min_length=2,max_length=20,examples=["アボカド"])
         due_date  : Optional[date] = Field(default=None,examples=["2025-10-26"])
         completed : Optional[bool] = Field(default=None,examples=[False])
+        
 
 class UserCreate(BaseModel):
         username : str = Field(min_length=2,examples=["user1"])
