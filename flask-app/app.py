@@ -1,7 +1,8 @@
-from flask import Flask,render_template,g
+from flask import Flask,render_template,g,session,url_for
 from flask import request,redirect
 import sqlite3
 import os
+import requests
 
 app = Flask(__name__)
 
@@ -19,6 +20,33 @@ def top():
     
     task_list =get_db().execute("select id,title,content,due_date,completed from tasks").fetchall()
     return render_template("index.html",task_list=task_list)
+
+#---ログイン画面---
+FASTAPI_URL = 'http://localhost:8000'  # FastAPIのURL
+app.secret_key = "8db6474b23b4eef4b0f9318a706cd4014323acf10991f5d5194a6bcb92e896d3"
+@app.route("/login",methods=['GET','POST'])
+def login():
+    if request.method == 'POST':
+        username = request.form.get('username')
+        password = request.form.get('password')
+    
+        response = requests.post(
+            f'{FASTAPI_URL}/login',
+            data={'username': username, 'password': password}
+        )
+        
+        if response.status_code==200:
+            token = response.json()['access_token']
+            session['jwt_token'] = token
+            return redirect(url_for("task_list"))
+        else:
+            return render_template("login.html",error='ログイン失敗')
+    return render_template("login.html")
+
+@app.route("/task_list")
+def login_sc():
+    return "login successful"
+
 
 
 #--- タスク追加 ---
