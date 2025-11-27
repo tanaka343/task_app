@@ -4,8 +4,9 @@
 SQLAlchemyのORMを使用してPythonクラスとデータベーステーブルをマッピングします。
 """
 
-from sqlalchemy import Column,Integer,String,Date,Boolean
+from sqlalchemy import Column,Integer,String,Date,Boolean,ForeignKey
 from database import Base
+from sqlalchemy.orm import relationship
 
 class Item(Base):
   """タスク管理のデータモデル
@@ -26,3 +27,15 @@ class Item(Base):
   content =Column(String,nullable=True) 
   due_date  =Column(Date,nullable=True)
   completed = Column(Boolean,default=False)
+  user_id = Column(Integer,ForeignKey("users.id",name="fk_user_id",ondelete="CASCADE"),nullable=False)
+
+  user = relationship("User",back_populates="items")
+
+class User(Base):
+  __tablename__ = "users"
+  id = Column(Integer,primary_key=True)
+  username = Column(String,nullable=False,unique=True)
+  password = Column(String,nullable=False)
+  salt = Column(String,nullable=False)
+
+  items = relationship("Item",back_populates="user")
