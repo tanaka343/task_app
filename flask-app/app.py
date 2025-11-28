@@ -8,18 +8,7 @@ app = Flask(__name__)
 
 DATABASE = os.path.join(os.path.dirname(os.path.dirname(__file__)),"database.db")
 
-@app.route("/")
-def top():
-    """
-    ルートページ（/）を表示
-    - tasksテーブルを作成（存在しない場合のみ）
-    - データベースから全タスクを取得
-    - index.htmlにタスクリストを渡す
-    """
-    create_table()
-    
-    task_list =get_db().execute("select id,title,content,due_date,completed from tasks").fetchall()
-    return render_template("index.html",task_list=task_list)
+
 
 #---ログイン画面---
 FASTAPI_URL = 'http://localhost:8000'  # FastAPIのURL
@@ -43,7 +32,7 @@ def login():
         if response.status_code==200:
             token = response.json()['access_token']
             session['jwt_token'] = token
-            return redirect(url_for("login_sc"))
+            return redirect(url_for("top"))
         else:
             return render_template("login.html",error='ログイン失敗')
     return render_template("login.html")
@@ -52,7 +41,26 @@ def login():
 def login_sc():
     return "login successful"
 
-
+# タスク一覧画面
+@app.route("/")
+def top():
+    """
+    ルートページ（/）を表示
+    - tasksテーブルを作成（存在しない場合のみ）
+    - データベースから全タスクを取得
+    - index.htmlにタスクリストを渡す
+    """
+    # create_table()
+    
+    # task_list =get_db().execute("select id,title,content,due_date,completed from tasks").fetchall()
+    token = session.get('jwt_token')
+    response = requests.get(
+            f'{FASTAPI_URL}/tasks',
+            headers={'Authorization':f'Bearer {token}'}
+        )
+    task_list = response.json()
+    return render_template("index.html",task_list=task_list)
+    
 
 #--- タスク追加 ---
 @app.route("/regist",methods=['GET','POST'])
@@ -69,8 +77,22 @@ def regist():
         content =request.form.get('content')
         due_date =request.form.get('due_date')
         completed =request.form.get('completed')
-        get_db().execute("INSERT INTO tasks (title,content,due_date,completed) values(?,?,?,?)",[title,content,due_date,completed])
-        get_db().commit()
+        # get_db().execute("INSERT INTO tasks (title,content,due_date,completed) values(?,?,?,?)",[title,content,due_date,completed])
+        # get_db().commit()
+        token = session.get('jwt_token')
+        response = requests.post(
+            f'{FASTAPI_URL}/tasks',
+            headers={'Authorization':f'Bearer {token}'},
+            # data={'title':title,'content':content,'due_date':due_date,'completed':completed}
+            json={
+                'title':title,
+                'content':content,
+                'due_date':due_date if due_date else None,
+                'completed':completed
+            }
+        )
+        print(f"Status Code r: {response.status_code}")  
+        print(f"Response r: {response.text}")   
         return redirect('/')
     #GETの場合そのまま返す
     return render_template("regist.html")
@@ -85,17 +107,34 @@ def edit(id):
     - POST: フォームから取得した値でDBを更新し、
             更新後はトップページに自動でリダイレクト
     """
+    token = session.get('jwt_token')
     #POSTの場合、フォームから情報を取得してDBに登録
     if request.method == 'POST':
         title =request.form.get('title')
         content =request.form.get('content')
         due_date =request.form.get('due_date')
         completed =int(request.form.get('completed'))
-        get_db().execute("update tasks set title=?, content=?,due_date=?,completed=? where id=?",[title,content,due_date,completed,id])
-        get_db().commit()
+        # get_db().execute("update tasks set title=?, content=?,due_date=?,completed=? where id=?",[title,content,due_date,completed,id])
+        # get_db().commit()
+        
+        response = requests.put(
+            f'{FASTAPI_URL}/tasks/{id}',
+            headers={'Authorization':f'Bearer {token}'},
+             json={
+                'title':title,
+                'content':content,
+                'due_date':due_date if due_date else None,
+                'completed':completed
+            }
+        )
         return redirect('/')
     #GETの場合、idを指定してDBから情報を取得し、編集フォームへ表示
-    task =get_db().execute("select id,title,content,due_date,completed from tasks where id=?",(id,)).fetchone()
+    # task =get_db().execute("select id,title,content,due_date,completed from tasks where id=?",(id,)).fetchone()
+    response = requests.get(
+            f'{FASTAPI_URL}/tasks/{id}',
+            headers={'Authorization':f'Bearer {token}'}
+        )
+    task = response.json()
     return render_template("edit.html",task=task)
 
 #--- タスク削除 ---
@@ -107,14 +146,24 @@ def delete(id):
     - GET: 指定IDのタスクを取得して確認画面表示
     - POST: 指定IDのタスクを削除し、トップページに自動リダイレクト
     """
+    token = session.get('jwt_token')
     #POSTの場合idを指定してDBからデータ削除
     if request.method=='POST':
-        get_db().execute("delete from tasks where id=?",(id,))
-        get_db().commit()
+        # get_db().execute("delete from tasks where id=?",(id,))
+        # get_db().commit()
+        response = requests.delete(
+            f'{FASTAPI_URL}/tasks/{id}',
+            headers={'Authorization':f'Bearer {token}'}
+        )
         return redirect('/')
     
     #GETの場合、idを指定してDBから情報を取得し、確認画面表示
-    task =get_db().execute("select id,title,content,due_date,completed from tasks where id=?",(id,)).fetchone()
+    # task =get_db().execute("select id,title,content,due_date,completed from tasks where id=?",(id,)).fetchone()
+    response = requests.get(
+        f'{FASTAPI_URL}/tasks/{id}',
+        headers={'Authorization':f'Bearer {token}'}
+    )
+    task = response.json()
     return render_template("delete.html",task=task)
     
 
