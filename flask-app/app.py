@@ -29,16 +29,21 @@ def login():
     if request.method == 'POST':
         username = request.form.get('username')
         password = request.form.get('password')
+
+        print(f"Username: {username}")  
+        print(f"Password: {password}")
     
         response = requests.post(
-            f'{FASTAPI_URL}/login',
+            f'{FASTAPI_URL}/auth/login',# fastapiのauthエンドポイントにprefixがついているため
             data={'username': username, 'password': password}
         )
+        print(f"Status Code: {response.status_code}")  
+        print(f"Response Body: {response.text}")  
         
         if response.status_code==200:
             token = response.json()['access_token']
             session['jwt_token'] = token
-            return redirect(url_for("task_list"))
+            return redirect(url_for("login_sc"))
         else:
             return render_template("login.html",error='ログイン失敗')
     return render_template("login.html")
