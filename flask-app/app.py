@@ -37,12 +37,9 @@ def login():
             return render_template("login.html",error='ログイン失敗')
     return render_template("login.html")
 
-@app.route("/task_list")
-def login_sc():
-    return "login successful"
 
 # タスク一覧画面
-@app.route("/")
+@app.route("/task_list")
 def top():
     """
     ルートページ（/）を表示
@@ -183,8 +180,14 @@ def delete_all():
     if request.method=='POST':
         id_list =request.form.getlist('delete_all')#name='delete_allの要素のvalueをリストにして返す
         if id_list is not None:
+            token = session.get('jwt_token')
             for id in id_list:
-                task_list.append(get_db().execute("select id,title,content,due_date,completed from tasks where id=?",(id,)).fetchone())
+                # task_list.append(get_db().execute("select id,title,content,due_date,completed from tasks where id=?",(id,)).fetchone())
+                response = requests.get(
+                    f'{FASTAPI_URL}/tasks/{id}',
+                    headers={'Authorization':f'Bearer {token}'}
+                )
+                task_list.append(response.json())
 
     #GETの場合、task_list=[]の場合のHTMLを表示        
     return render_template("delete_all.html",task_list=task_list)
@@ -203,58 +206,63 @@ def deletes():
     #POSTの場合、フォームから複数のIDを取得しDBから削除
     if request.method=='POST':
         id_list=request.form.getlist('deletes')
+        token = session.get('jwt_token')
         for id in id_list:
-            get_db().execute("delete from tasks where id=?",(id,))
-        get_db().commit()
+            # get_db().execute("delete from tasks where id=?",(id,))
+            response = requests.delete(
+                    f'{FASTAPI_URL}/tasks/{id}',
+                    headers={'Authorization':f'Bearer {token}'}
+                )
+        # get_db().commit()
     
     #GETの場合、TOPページを表示
     return redirect('/')
 
 #--- データベース作成、接続 ---
-def connect_db():
-    """
-    SQLiteデータベースに接続する。
+# def connect_db():
+#     """
+#     SQLiteデータベースに接続する。
 
-    - DATABASEで指定されたファイルに接続（存在しなければ新規作成）
-    - row_factoryをsqlite3.Rowに設定することで、
-      SQLの結果を辞書のようにカラム名でアクセス可能にする
-    - 接続オブジェクトを返す
-    """
-    rv = sqlite3.connect(DATABASE)
-    rv.row_factory = sqlite3.Row
-    return rv
+#     - DATABASEで指定されたファイルに接続（存在しなければ新規作成）
+#     - row_factoryをsqlite3.Rowに設定することで、
+#       SQLの結果を辞書のようにカラム名でアクセス可能にする
+#     - 接続オブジェクトを返す
+#     """
+#     rv = sqlite3.connect(DATABASE)
+#     rv.row_factory = sqlite3.Row
+#     return rv
 
-def get_db():
-    """
-    現在のリクエストで使用するデータベース接続を取得する。
+# def get_db():
+#     """
+#     現在のリクエストで使用するデータベース接続を取得する。
 
-    - g.sqlite_dbに接続が保存されていればそれを返す
-    - 保存されていなければconnect_db()で新しく接続を作成して保存
+#     - g.sqlite_dbに接続が保存されていればそれを返す
+#     - 保存されていなければconnect_db()で新しく接続を作成して保存
     
-    """
-    if not hasattr(g,'sqlite_db'):
-        g.sqlite_db = connect_db()
-    return g.sqlite_db
+#     """
+#     if not hasattr(g,'sqlite_db'):
+#         g.sqlite_db = connect_db()
+#     return g.sqlite_db
 
-#--- テーブルの作成 ---
-def create_table():
-    """
-    tasksテーブルを作成する。
+# #--- テーブルの作成 ---
+# def create_table():
+#     """
+#     tasksテーブルを作成する。
 
-    - データベースに接続（存在しなければ新規作成）
-    - tasksテーブルを作成（すでに存在する場合は何もしない）
-    - カラム:
-        id        : タスクID（自動増分）
-        title     : タスク名
-        content   : 内容
-        due_date  : 期限
-        completed : 完了フラグ（0または1）
-    - 作成後、接続を閉じる
-    """
-    con = sqlite3.connect(DATABASE)
-    con.execute("CREATE TABLE IF NOT EXISTS tasks (id INTEGER PRIMARY KEY AUTOINCREMENT,title TEXT,content TEXT,due_date TEXT,completed INTEGER)")
-    con.commit()
-    con.close()
+#     - データベースに接続（存在しなければ新規作成）
+#     - tasksテーブルを作成（すでに存在する場合は何もしない）
+#     - カラム:
+#         id        : タスクID（自動増分）
+#         title     : タスク名
+#         content   : 内容
+#         due_date  : 期限
+#         completed : 完了フラグ（0または1）
+#     - 作成後、接続を閉じる
+#     """
+#     con = sqlite3.connect(DATABASE)
+#     con.execute("CREATE TABLE IF NOT EXISTS tasks (id INTEGER PRIMARY KEY AUTOINCREMENT,title TEXT,content TEXT,due_date TEXT,completed INTEGER)")
+#     con.commit()
+#     con.close()
 
 
 #--- 実行部分 ---
