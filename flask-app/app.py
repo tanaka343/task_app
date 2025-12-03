@@ -46,6 +46,22 @@ def logout():
     session.pop('jwt_token',None)
     return redirect(url_for('login'))
 
+@app.route("/signup")
+def signup():
+    if request.method == 'POST':
+        username = request.form.get('username')
+        password = request.form.get('password')
+        response= requests.post(
+            f'{FASTAPI_URL}/auth/signup',# fastapiのauthエンドポイントにprefixがついているため
+                data={'username': username, 'password': password}
+        )
+        if response.status_code==201:
+            return redirect(url_for('login'))
+        else:
+            return render_template("signup.html",error='ユーザーが登録できません')
+    return render_template("signup.html")
+
+
 # タスク一覧画面
 @app.route("/task_list")
 def top():
