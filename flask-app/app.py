@@ -46,14 +46,15 @@ def logout():
     session.pop('jwt_token',None)
     return redirect(url_for('login'))
 
-@app.route("/signup")
+# ユーザー登録画面
+@app.route("/signup",methods=['GET','POST'])
 def signup():
     if request.method == 'POST':
         username = request.form.get('username')
         password = request.form.get('password')
         response= requests.post(
             f'{FASTAPI_URL}/auth/signup',# fastapiのauthエンドポイントにprefixがついているため
-                data={'username': username, 'password': password}
+                json={'username': username, 'password': password}
         )
         if response.status_code==201:
             return redirect(url_for('login'))
