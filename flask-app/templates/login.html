@@ -4,20 +4,24 @@
 {% if error %}
   <p style="color: red;">{{ error }}</p>
 {% endif %}
-<div class="task">
-  <form method="POST">
-    <div>
-      <label for="username">ユーザー名</label>
-      <input name="username" type="text" required>
+<div class="per-form">
+  <form method="POST" class="form">
+    <div class="input">
+      <div >
+        <label for="username">ユーザー名</label>
+        <input name="username" type="text" required>
+      </div>
+      <div>
+        <label for="password">パスワード</label>
+        <input name="password" type="password" />
+      </div>
     </div>
     <div>
-      <label for="password">パスワード</label>
-      <input name="password" type="password" />
-    </div>
-    <div class="button-container">
       <input type="submit" value="ログイン" class="button-primary">
-      <a href="/signup" class="button-primary">新規ユーザー登録</a>
     </div>
+    <a href="/signup" class="signup">新規ユーザー登録</a>
   </form>
+  
 </div>
+
 {%endblock%}

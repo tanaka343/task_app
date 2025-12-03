@@ -93,3 +93,19 @@ table input,select{
 .done,.done a{
   color:#adb5bd
 }
+
+/* ログイン画面 */
+/* .per-form{
+  display: flex;
+  justify-content: ;
+} */
+
+.form{
+  text-align: center;
+  
+}
+
+.input{
+  margin: 4rem;
+  line-height: 2;
+}
