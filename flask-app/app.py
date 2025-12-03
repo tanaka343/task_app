@@ -8,7 +8,11 @@ app = Flask(__name__)
 
 DATABASE = os.path.join(os.path.dirname(os.path.dirname(__file__)),"database.db")
 
-
+@app.route('/')
+def root():
+    if 'jwt_token' not in session:
+        return redirect(url_for('login'))
+    return redirect(url_for('top'))
 
 #---ログイン画面---
 FASTAPI_URL = 'http://localhost:8000'  # FastAPIのURL
@@ -37,6 +41,10 @@ def login():
             return render_template("login.html",error='ログイン失敗')
     return render_template("login.html")
 
+@app.route("/logout")
+def logout():
+    session.pop('jwt_token',None)
+    return redirect(url_for('login'))
 
 # タスク一覧画面
 @app.route("/task_list")
