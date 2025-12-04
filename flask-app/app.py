@@ -3,6 +3,7 @@ from flask import request,redirect
 import sqlite3
 import os
 import requests
+import jwt
 
 app = Flask(__name__)
 
@@ -36,6 +37,7 @@ def login():
         if response.status_code==200:
             token = response.json()['access_token']
             session['jwt_token'] = token
+            session['username'] = username
             return redirect(url_for("top"))
         else:
             return render_template("login.html",error='ログイン失敗')
@@ -81,7 +83,9 @@ def top():
             headers={'Authorization':f'Bearer {token}'}
         )
     task_list = response.json()
-    return render_template("index.html",task_list=task_list)
+    username = session.get('username')
+
+    return render_template("index.html",task_list=task_list,username=username)
     
 
 #--- タスク追加 ---
