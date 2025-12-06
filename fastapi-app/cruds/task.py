@@ -5,7 +5,7 @@ from datetime import timedelta,date
 from schemas import ItemCreate, ItemUpdate
 
 def find_all(db :Session,user_id :int):
-    return db.query(Item).all()
+    return db.query(Item).filter(Item.user_id == user_id).all()
 
 def find_by_due(db :Session,due_date :str,end :Optional[int]):
     
