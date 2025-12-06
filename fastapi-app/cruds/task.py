@@ -31,8 +31,8 @@ def find_by_due_fromtoday(db :Session,end :Optional[int] ):
         return None
     return found_items
 
-def find_by_id(id :int,db :Session):
-    found_item = db.query(Item).filter(Item.id == id).first()
+def find_by_id(id :int,db :Session,user_id :int):
+    found_item = db.query(Item).filter(Item.id == id).filter(Item.user_id == user_id).first()
     if not found_item:
         return None
     return found_item
@@ -46,7 +46,7 @@ def create(create_item :ItemCreate,db :Session,user_id :int):
     return new_item
 
 def update(update_item :ItemUpdate,id :int,db :Session,user_id :int):
-    item = db.query(Item).filter(Item.id == id).first()
+    item = find_by_id(id,db,user_id)
     if not item:
         return None
     item.title = item.title if update_item.title is None else update_item.title
@@ -58,7 +58,7 @@ def update(update_item :ItemUpdate,id :int,db :Session,user_id :int):
     return item
 
 def delete(id :int,db :Session,user_id :int):
-    item = db.query(Item).filter(Item.id == id).filter(User.id == user_id).first()
+    item = find_by_id(id,db,user_id)
     if not item:
        return None
     db.delete(item)
