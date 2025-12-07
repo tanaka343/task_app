@@ -1,10 +1,14 @@
 # Flask版 タスク管理アプリ
 
-Flaskを使用したタスク管理Webアプリケーションです。フロントエンドも含めた完全なWebアプリとして実装されています。\
+Flaskを使用したタスク管理Webアプリケーションです。学習目的でフロントエンドも含めた完全なWebアプリとして実装しました。\
 デプロイ版：<http://task_app.tanaka343-portfolio.com>
 
 ## 目的
-Webアプリ開発の基礎理解、データベース接続
+
+- Webアプリ開発の基礎理解
+- httpリクエストの理解（GET/POST）
+- htmlテンプレートエンジン（Jinja2）の使用
+- CRUD操作の実装
 
 ## 機能
 
@@ -17,11 +21,11 @@ Webアプリ開発の基礎理解、データベース接続
 
 ## 技術スタック
 
-- Python
-- Flask
-- SQLite
-- HTML/CSS
-- Jinja2（テンプレートエンジン）
+Python\
+Flask\
+SQLite\
+HTML/CSS\
+Jinja2（テンプレートエンジン）
 
 ## ファイル構成
 
@@ -36,7 +40,9 @@ flask_app/
 │   ├── delete.html       # 削除確認画面
 │   ├── edit.html         # 編集画面
 │   ├── index.html        # TOP画面
-│   └── regist.html       # 新規登録画面
+│   ├── regist.html       # 新規登録画面
+│   ├── login.html        # ログイン画面
+│   └── signup.html       # 新規ユーザー登録画面
 ├── app.py                # アプリケーションのメインコード
 ├── .gitignore            # Git管理除外ファイル
 ├── README.md             # このファイル
@@ -48,7 +54,7 @@ flask_app/
 ### 依存パッケージのインストール
 
 ```bash
-pip install -r requirements.txt
+pip install -r ../requirements.txt
 ```
 
 データベースは初回実行時に自動的に作成されます。
@@ -62,7 +68,12 @@ flask run
 アプリケーションが起動したら、ブラウザで以下のURLにアクセスしてください：\
 <http://localhost:5000>
 
-## 使い方
+## 画面イメージ
+
+- ログイン画面\
+![ログイン画面画像](images/ログイン画面.png)
+- ユーザー登録画面\
+![ユーザー登録画面画像](images/ユーザー登録画面.png)
 - TOP画面\
 ![TOP画面画像](images/top画面.png)
 - 新規登録画面\
@@ -73,6 +84,9 @@ flask run
 ![編集画面画像](images/編集画面.png)
 - 一括削除画面\
 ![一括削除画面画像](images/一括削除画面.png)
+
+## 使い方
+
 ### 新規登録
 
 1.「新規登録」ボタンを押す\
@@ -111,7 +125,6 @@ POST（例外）：　取得した情報をURLに乗せたくない場合（タ�
 - デザインの統一感\
 全体の色合いが調和するよう配色を整え、見やすくなるよう工夫しました。
 
-
 ## 改善点・今後の課題
 
 - 学習の姿勢\
@@ -123,8 +136,3 @@ POST（例外）：　取得した情報をURLに乗せたくない場合（タ�
 
 - pytestの作成
 - ~~README.mdの充実~~
-
-<!-- ## Youtubeアプリ全体のデモ動画
-今後追加予定 -->
-<!-- [![アプリ操作動画](https://img.youtube.com/vi/dQw4w9WgXcQ/hqdefault.jpg)](https://www.youtube.com/watch?v=dQw4w9WgXcQ) -->
-<!-- [動画を見る](https://www.youtube.com/watch?v=動画ID) -->

@@ -5,20 +5,8 @@ Flask と FastAPI を使って同じ機能を実装し、\
 最終的に 画面（Flask） と 業務ロジック（FastAPI） を分離し、連携させています。
 
 ## 開発ステップ
-<!-- ## 各アプリの特徴
 
-### Flask版 (flask-app/)
-- フロントエンド - HTMLテンプレートを使用したWebインターフェース\
-- 一括削除機能 - 複数のタスクをまとめて削除可能\
-- 詳細は [flask-app/README.md](./flask-app/README.md) を参照
-
-### FastAPI版 (fastapi-app/)
-- 日付フィルタリング - 指定した日数後までのタスクを取得可能
-- SQLAlchemy - ORMを使ったデータベース操作
-- Alembic - データベースマイグレーション管理
-- 自動生成されるAPIドキュメント（Swagger UI）
-- JWT認証
-- 詳細は [fastapi-app/README.md](./fastapi-app/README.md)を参照 -->
+詳しくはリポジトリの Tags をご覧ください。
 
 ### 1. Flask 版の開発（初期版：Webアプリとして実装）
 
@@ -73,7 +61,6 @@ task_app
 - ユーザー操作
 - JWT を使ってFastAPIと通信
 
-
 ### FastAPI版 （APIサーバー）
 
 - 認証（JWT）
@@ -81,6 +68,7 @@ task_app
 - タスクのCRUD
 
 ## JWT 認証
+
 このプロジェクトでは、ユーザー認証に JWT（JSON Web Token） を使用しています。
 JWT を使うことで、API 間で安全にユーザー情報を受け渡すことができます。
 
@@ -88,7 +76,7 @@ JWT を使うことで、API 間で安全にユーザー情報を受け渡すこ
 
 - ユーザーがユーザー名とパスワードでログイン
 - FastAPI がパスワードを検証し、JWT を発行
-- クライアント（Flask）が JWT を Authorization: Bearer <token> として送信
+- クライアント（Flask）が JWT を Authorization: Bearer (token) として送信
 - FastAPI が JWT を検証し、ユーザーだけが利用できるAPIを実行
 
 ### なぜ JWT を採用したか
@@ -105,6 +93,7 @@ JWT を使うことで、API 間で安全にユーザー情報を受け渡すこ
 - OAuth2PasswordBearer：FastAPI 標準の認証仕組み
 
 ## Flask × FastAPI の連携
+
 このプロジェクトでは、フロントエンド（Flask） と API サーバー（FastAPI） を分離して構築しています。\
 Flask は画面表示とユーザー入力を担当し、実際のデータ処理は FastAPI 側が行う構造になっています。
 
@@ -142,6 +131,7 @@ ORM (FastAPI版のみ) : SQLAlchemy\
 マイグレーション (FastAPI版のみ) : Alembic\
 認証: JWT\
 言語: Python
+
 ## セットアップ方法
 
 ### 1. 依存パッケージのインストール
@@ -149,24 +139,28 @@ ORM (FastAPI版のみ) : SQLAlchemy\
 ```bash
 pip install -r requirements.txt
 ```
+
 ### 2. FastAPIのセットアップ
+
 ```bash
 #マイグレーション実行（テーブル作成）
 cd fastapi-app
 alembic upgrade head
 uvicorn main:app --reload
 ```
+
 起動後：
-FastAPI ドキュメント → http://127.0.0.1:8000/docs
+FastAPI ドキュメント → <http://127.0.0.1:8000/docs>
 
 ### 3. Flask のセットアップ（フロント）
+
 ```bash
 cd flask-app
 flask run
 ```
 
 起動後：
-Flask 画面 → http://127.0.0.1:5000
+Flask 画面 → <http://127.0.0.1:5000>
 
 ### 使用方法
 
@@ -177,6 +171,7 @@ Flask 画面 → http://127.0.0.1:5000
 <!-- ## シーケンス図 or 全体アーキテクチャ図 -->
 
 ## 今後の改善予定
+
 - 今日のタスク、今日から何日後のタスクエンドポイントをフロントエンドに実装
 - loggingでのログ出力
 - api同士の連携

@@ -1,10 +1,14 @@
 # FastAPI版 タスク管理アプリ
 
-FastAPIとSQLAlchemyを使用したタスク管理APIです。学習用のため、フォルダを極力分けずにシンプルに作成しました。
+FastAPI と SQLAlchemy を用いて構築したタスク管理APIです。
+学習目的で開発し、CRUD / 認証 / バリデーション / マイグレーション / テスト といった
+バックエンド API に必要な要素を一通り実装しました。
 
 ## 目的
-Udemyで学習したFastAPIの内容をアウトプットする目的で、既存のタスク管理アプリを再構成しました。\
-CRUD処理、バリデーション、マイグレーション、テストまでの一連の流れを通して、自分でAPI設計・実装ができるようになることを目指しました。
+
+- Udemyで学習したFastAPIの内容をアウトプットする目的で、既存のタスク管理アプリを再構成
+- FastAPI による API設計〜実装の一連の流れを習得 するため
+- SQLAlchemy / Alembic を用いた データベース操作とマイグレーション管理 を学ぶため
 
 ## 機能
 
@@ -12,6 +16,7 @@ CRUD処理、バリデーション、マイグレーション、テストまで�
 - 日付範囲でのタスク検索
 - 今日から指定日数後までのタスク取得
 - 自動生成されるAPIドキュメント（Swagger UI）
+- JWT によるログイン / サインアップ
 - データベースマイグレーション管理（Alembic）
 - APIテスト（pytest）
 
@@ -22,23 +27,37 @@ SQLAlchemy（ORM）\
 Alembic（マイグレーション）\
 SQLite\
 Pydantic（バリデーション）\
+python-jose（JWT 認証）\
 pytest（テスト）
 
 ## ファイル構成
 
 ```python
-fastapi_app/
-├── migrations/        # Alembicマイグレーションファイル
-├── tests/             # テストファイル
-├── __init__.py
-├── alembic.ini        # Alembic設定
-├── database.py        # データベース接続
-├── main.py            # アプリケーションエントリポイント
-├── models.py          # SQLAlchemyモデル
-├── schemas.py         # Pydanticスキーマ
-├── seed.py            # テストデータ投入スクリプト
-├── test_data.csv      # テストデータ
-└── requirements.txt   # 依存パッケージ
+fastapi-app/
+├── cruds/      # ビジネスロジック（DB操作）
+│ ├── init.py
+│ ├── auth.py   # 認証関連のCRUD
+│ └── task.py   # タスクCRUD
+│
+├── routers/    # エンドポイント定義
+│ ├── init.py
+│ ├── auth.py   # /login など認証系
+│ └── task.py   # /tasks API
+│
+├── migrations/ # Alembic マイグレーションファイル
+│
+├── tests/      # pytest テスト
+│ ├── conftest.py # テスト用DBなどのfixture
+│ └── test_main.py # エンドポイントのテスト
+│
+├── alembic.ini # Alembic 設定
+├── database.py # DB 接続・セッション管理
+├── main.py     # FastAPI エントリポイント
+├── models.py   # SQLAlchemy モデル
+├── schemas.py  # Pydantic スキーマ
+├── seed.py     # オプションデータ投入スクリプト
+├── test_data.csv # オプションデータ
+└── README.md   # FastAPI版 README
 ```
 
 ## セットアップ
@@ -46,7 +65,8 @@ fastapi_app/
 ### 1. 依存パッケージのインストール
 
 ```bash
-pip install -r requirements.txt
+pip install -r ../requirements.txt
+
 ```
 
 ### 2. データベースのセットアップ
@@ -54,12 +74,6 @@ pip install -r requirements.txt
 ```bash
 #マイグレーション実行（テーブル作成）
 alembic upgrade head
-```
-
-### 3. （オプション）テストデータの投入
-
-```bash
-python seed.py
 ```
 
 ### 実行方法
@@ -74,6 +88,7 @@ uvicorn main:app --reload
 - **Swagger UI**: <http://localhost:8000/docs>
 
 ### テストの実行
+
 ```bash
 pytest tests/test_main.py
 ```
@@ -93,99 +108,32 @@ pytest tests/test_main.py
   "content": "タスクの内容",
   "due_date": "2025-10-30",
   "completed": false
+  "user_id": 1
 }
 ```
 
 ### エンドポイント一覧
 
-#### 1. 全タスク取得
-
-```bash
-GET /items
-```
-
-レスポンス: タスクの配列
-
-#### 2.日付範囲でタスク取得
-
-```bash
-GET /items/?due_date=2025-10-30&end=7
-```
-
-クエリパラメータ:
-
-- due_date (必須): 開始日（YYYY-MM-DD形式）\
-- end (オプション): 開始日から何日後までを取得するか
-
-例:
-
-- GET /items/?due_date=2025-10-30 - 2025-10-30のタスクのみ
-- GET /items/?due_date=2025-10-30&end=7 - 2025-10-30から7日間のタスク
-
-#### 3.今日から指定日数後までのタスク取得
-
-```bash
-GET /items/today?end=7
-```
-
-クエリパラメータ:
-
-- end (オプション): 今日から何日後までを取得するか
-
-例:
-
-- GET /items/today - 今日のタスクのみ\
-- GET /items/today?end=7 - 今日から7日間のタスク
-
-#### 4. ID指定でタスク取得
-
-```bash
-GET /items/{id}
-```
-
-#### 5. タスク作成
-
-```bash
-POST /items
-```
-
-リクエストボディ:
-
-```json
-{
-  "title": "新しいタスク",
-  "content": "タスクの詳細",
-  "due_date": "2025-11-01",
-  "completed": false
-}
-```
-
-#### 6. タスク更新
-
-```bash
-PUT /items/{id}
-```
-
-リクエストボディ: 更新したいフィールドのみ指定可能
-
-```json
-{
-  "title": "更新されたタイトル",
-  "completed": true
-}
-```
-
-#### 7. タスク削除
-
-```bash
-DELETE /items/{id}
-```
+| メソッド | エンドポイント        | 説明                                        | パラメータ                          | 認証 |
+|---------|----------------------|---------------------------------------------|--------------------------------------|------|
+| POST    | `/login`             | ログインして JWT を取得                    　 | -                                    | 不要 |
+| POST    | `/signup`            | ユーザー登録                              　 | -                                    | 不要 |
+| GET     | `/tasks`             | 全タスク取得                                 | -                                    | 必要 |
+| GET     | `/tasks/{id}`        | ID 指定タスク取得                            | -                                    | 必要 |
+| POST    | `/tasks`             | タスク作成                                   | JSON ボディ                          | 必要 |
+| PUT     | `/tasks/{id}`        | タスク更新                                   | JSON ボディ                         　| 必要 |
+| DELETE  | `/tasks/{id}`        | タスク削除                                   | -                                   | 必要 |
+| GET     | `/tasks/`            | 指定した期限日、または期限日からn日後まで取得   | `due_date`（必須）, `end`（任意）    | 不要 |
+| GET     | `/today`             | 今日から n日後までのタスク取得              　 | `end`（任意）                      | 不要 |
 
 ## 工夫した点・学んだこと
+
 ### API機能の工夫
+
 - ユーザービリティを考えて今日（開始日）から何日後までのタスクを取得できるようにした。
 
 ### 技術的なこと
+
 - ORMの活用（SQLAlchemy）\
 SQL文を直接書かずにPythonコードでデータ操作を行い、保守性を高めました。
 
