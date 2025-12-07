@@ -1,6 +1,9 @@
 {% extends "base.html" %}
 {%block content%}
-<h1>タスク管理アプリ</h1>
+<div class="logout-button">
+  <a href="/logout">ログアウト</a>
+</div>
+<h1><span style="color: #0b6abe;">{{username}}<span style="font-size: 0.8em;">さんの</span></span>タスク管理アプリ</h1>
 <div class="task">
   <div class="button-right">
     <a href="/regist" class="button-primary">新規登録</a>

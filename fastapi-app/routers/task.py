@@ -85,7 +85,7 @@ async def find_by_due_fromtoday(db :DbDependency,end :Optional[int] = Query(defa
 
 
 @router.get("/{id}",response_model=Optional[ItemResponse],status_code=status.HTTP_200_OK)
-async def find_by_id(id :int,db :DbDependency):
+async def find_by_id(id :int,db :DbDependency,user :UserDependency):
     """IDでタスクを取得
     
     指定されたIDに一致する単一のタスクを取得します。
@@ -100,7 +100,7 @@ async def find_by_id(id :int,db :DbDependency):
     Raises:
         HTTPException: タスクが見つからない場合（404）
     """
-    found_item = task_cruds.find_by_id(id,db)
+    found_item = task_cruds.find_by_id(id,db,user.user_id)
     if not found_item:
         raise HTTPException(status_code=404,detail="Task not found")
     return found_item

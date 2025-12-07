@@ -12,6 +12,9 @@ from main import app
 from fastapi.testclient import TestClient
 from models import Base,Item
 from datetime import date
+from schemas import DecodedToken
+from cruds.auth import get_current_user
+
 
 @pytest.fixture()
 def session_fixture():
@@ -26,8 +29,8 @@ def session_fixture():
 
     try:
         today = date.today()
-        task1 = Item(title="kaimono1",content="milk",due_date=today,completed=False)
-        task2 = Item(title="kaimono2",content="pasta",due_date=date(2025,10,30),completed=False)
+        task1 = Item(title="kaimono1",content="milk",due_date=today,completed=False,user_id="1")
+        task2 = Item(title="kaimono2",content="pasta",due_date=date(2025,10,30),completed=False,user_id="1")
         db.add(task1)
         db.add(task2)
         db.commit()
@@ -36,11 +39,20 @@ def session_fixture():
         db.close()
 
 @pytest.fixture()
-def client_fixture(session_fixture):
+def user_fixture():
+    return DecodedToken(username='user1',user_id=1)
+
+@pytest.fixture()
+def client_fixture(session_fixture: Session,user_fixture :DecodedToken):
     def override_get_db():
         return session_fixture
     
+    def override_get_current_user():
+        return user_fixture
+
     app.dependency_overrides[get_db] = override_get_db
+    app.dependency_overrides[get_current_user] = override_get_current_user
+    
     client = TestClient(app)
     yield client
 

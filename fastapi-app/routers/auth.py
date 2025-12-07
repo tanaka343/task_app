@@ -23,3 +23,11 @@ async def login(db :DbDependency,form_data :FormDependency):
         raise HTTPException(status_code=401,detail="Incorrect username or password")
     token = auth_cruds.create_access_token(user.username,user.id,timedelta(minutes=20))
     return {"access_token":token,"token_type":"bearer"}
+
+# @router.post("/login")
+# async def login(db :DbDependency,username :str,password :str):
+#     user = auth_cruds.login(username,password,db)
+#     if not user:
+#         raise HTTPException(status_code=401,detail="Incorrect username or password")
+#     token = auth_cruds.create_access_token(user.username,user.id,timedelta(minutes=20))
+#     return {"access_token":token,"token_type":"bearer"}
