@@ -11,6 +11,17 @@ from typing import Annotated
 from fastapi import Depends
 
 def create_user(user_create :UserCreate,db :Session):
+    """新規ユーザーを作成
+    
+    パスワードをハッシュ化し、ソルトと共にデータベースに保存します。
+    
+    Args:
+        user_create: ユーザー作成情報（username, password）
+        db: データベースセッション
+        
+    Returns:
+        User: 作成されたユーザー（パスワードはハッシュ化済み）
+    """
     salt = base64.b64encode(os.urandom(32))
     hashed_password = hashlib.pbkdf2_hmac("sha256",user_create.password.encode(),salt,1000).hex()# hmacはバイトのため16進数に変換
     new_user = User(
@@ -24,6 +35,19 @@ def create_user(user_create :UserCreate,db :Session):
     return new_user
 
 def login(username :str,password :str,db :Session):
+    """ユーザー認証
+    
+    ユーザー名とパスワードを検証し、一致すればユーザー情報を返します。
+    
+    Args:
+        username: ユーザー名
+        password: パスワード（平文）
+        db: データベースセッション
+        
+    Returns:
+        User: 認証成功したユーザー
+        None: 認証失敗の場合
+    """
     user = db.query(User).filter(User.username==username).first()
     if not user:
         return None
@@ -35,13 +59,38 @@ def login(username :str,password :str,db :Session):
 SECRET_KEY = "91828183e516b1314a1efd282d875320e64fafb2356e23a456d32a600a495d6c"
 ALGORITHM = "HS256"
 def create_access_token(username :str,user_id :int,expires_delta :timedelta):
+    """JWTアクセストークンを作成
+    
+    ユーザー情報を暗号化してJWTトークンを生成します。
+    
+    Args:
+        username: ユーザー名
+        user_id: ユーザーID
+        expires_delta: トークン有効期限
+        
+    Returns:
+        str: 生成されたJWTトークン
+    """
     expires = datetime.now() + expires_delta
     payload = {"sub":username,"id":user_id,"exp":expires}
     return jwt.encode(payload,SECRET_KEY,algorithm=ALGORITHM)
 
-oath2_scheme = OAuth2PasswordBearer(tokenUrl="/auth/login")
 
-def get_current_user(token :Annotated[str,Depends(oath2_scheme)]):
+oauth2_scheme = OAuth2PasswordBearer(tokenUrl="/auth/login")
+def get_current_user(token :Annotated[str,Depends(oauth2_scheme)]):
+    """現在のユーザー情報を取得
+    
+    JWTトークンをデコードし、ユーザー情報を検証して返します。
+    
+    Args:
+        token: JWTアクセストークン（Authorizationヘッダーから自動取得）
+        
+    Returns:
+        DecodedToken: デコードされたユーザー情報（username, user_id）
+
+    Raises:
+        JWTError:  トークンが不正または期限切れの場合
+    """
     try:
         payload = jwt.decode(token,SECRET_KEY,algorithms=ALGORITHM)
         username = payload.get("sub")
