@@ -3,6 +3,7 @@
 Flask と FastAPI を使って同じ機能を実装し、\
 フロントエンドと API サーバーを分離する構成を学ぶプロジェクトです。\
 最終的に 画面（Flask） と 業務ロジック（FastAPI） を分離し、連携させています。
+デプロイ版：<http://task_app.tanaka343-portfolio.com>
 
 ## 開発ステップ
 

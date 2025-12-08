@@ -1,7 +1,7 @@
 # Flask版 タスク管理アプリ
 
 Flaskを使用したタスク管理Webアプリケーションです。学習目的でフロントエンドも含めた完全なWebアプリとして実装しました。\
-デプロイ版：<http://task_app.tanaka343-portfolio.com>
+
 
 ## 目的
 
