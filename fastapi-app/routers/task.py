@@ -24,10 +24,7 @@ UserDependency = Annotated[DecodedToken,Depends(auth_cruds.get_current_user)]
 async def find_all(db :DbDependency,user :UserDependency):
     """全タスクを取得
     
-    タスク管理アプリに登録されている全てのタスクを取得します。
-    
-    Args:
-        db: データベースセッション
+    ログイン中のユーザーに紐づく全てのタスクを取得します。
         
     Returns:
         list[ItemResponse]: 全タスクのリスト
@@ -45,7 +42,6 @@ async def find_by_due(db :DbDependency,due_date :str = Query(example="2025-10-30
     Args:
         due_date: 検索開始日（YYYY-MM-DD形式）
         end: 検索終了日までの日数（省略時はdue_dateのみ）
-        db: データベースセッション
         
     Returns:
         list[ItemResponse]: 検索条件に一致するタスクのリスト
@@ -70,8 +66,7 @@ async def find_by_due_fromtoday(db :DbDependency,end :Optional[int] = Query(defa
     
     Args:
         end: 今日から何日後までのタスクを取得するか（省略時は今日のみ）
-        db: データベースセッション
-        
+       
     Returns:
         list[ItemResponse]: 検索条件に一致するタスクのリスト
         
@@ -92,7 +87,6 @@ async def find_by_id(id :int,db :DbDependency,user :UserDependency):
     
     Args:
         id: タスクID
-        db: データベースセッション
         
     Returns:
         ItemResponse: 取得したタスク
@@ -112,9 +106,6 @@ async def create(create_item :ItemCreate,db :DbDependency,user :UserDependency):
     
     リクエストボディで受け取ったデータから新しいタスクを作成します。
     
-    Args:
-        create_item: 作成するタスクの情報
-        db: データベースセッション
         
     Returns:
         ItemResponse: 作成されたタスク
@@ -130,11 +121,9 @@ async def update(update_item :ItemUpdate,id :int,db :DbDependency,user :UserDepe
     指定されたIDのタスクを部分更新します。
     送信されたフィールドのみが更新され、省略されたフィールドは元の値を保持します。
     
-    Args:
-        update_item: 更新するタスクの情報（部分更新可能）
+     Args:
         id: 更新対象のタスクID
-        db: データベースセッション
-        
+
     Returns:
         ItemResponse: 更新後のタスク
         
@@ -154,8 +143,7 @@ async def delete(id :int,db :DbDependency,user :UserDependency):
     
     Args:
         id: 削除対象のタスクID
-        db: データベースセッション
-        
+       
     Returns:
         Item: 削除されたタスクの情報
         
