@@ -3,7 +3,7 @@ from flask import request,redirect
 import sqlite3
 import os
 import requests
-import jwt
+
 
 app = Flask(__name__)
 
@@ -11,6 +11,11 @@ DATABASE = os.path.join(os.path.dirname(os.path.dirname(__file__)),"database.db"
 
 @app.route('/')
 def root():
+    """ルート分岐
+    
+    JWTトークンを保持していれば、タスク一覧画面へリダイレクト、
+    ない場合は、ログイン画面へリダイレクトします。
+    """
     if 'jwt_token' not in session:
         return redirect(url_for('login'))
     return redirect(url_for('top'))
@@ -20,6 +25,11 @@ FASTAPI_URL = 'http://localhost:8000'  # FastAPIのURL
 app.secret_key = "8db6474b23b4eef4b0f9318a706cd4014323acf10991f5d5194a6bcb92e896d3"
 @app.route("/login",methods=['GET','POST'])
 def login():
+    """ログイン画面
+    
+    - GET: ログインフォームを表示
+    - POST: 認証し、正しければタスク一覧画面へリダイレクト
+    """
     if request.method == 'POST':
         username = request.form.get('username')
         password = request.form.get('password')
@@ -45,12 +55,23 @@ def login():
 
 @app.route("/logout")
 def logout():
+    """ログアウト処理
+    
+    セッションを削除しログイン画面へリダイレクトします。
+
+    """
     session.pop('jwt_token',None)
     return redirect(url_for('login'))
 
 # ユーザー登録画面
 @app.route("/signup",methods=['GET','POST'])
 def signup():
+    """ユーザー登録画面
+    
+    - GET: 空の新規ユーザーの登録画面を表示
+    - POST: フォームから登録情報を取得し、成功すれば
+            更新後はログイン画面に自動でリダイレクト
+    """
     if request.method == 'POST':
         username = request.form.get('username')
         password = request.form.get('password')
@@ -68,11 +89,8 @@ def signup():
 # タスク一覧画面
 @app.route("/task_list")
 def top():
-    """
-    ルートページ（/）を表示
-    - tasksテーブルを作成（存在しない場合のみ）
-    - データベースから全タスクを取得
-    - index.htmlにタスクリストを渡す
+    """タスク一覧画面
+    ログイン中のユーザーのタスク一覧を表示します。
     """
     # create_table()
     
@@ -91,10 +109,10 @@ def top():
 #--- タスク追加 ---
 @app.route("/regist",methods=['GET','POST'])
 def regist():
-    """
-    タスク登録ページ
+    """タスク新規登録画面
+
     - GET: 空の登録フォーム表示
-    - POST: フォームからタスク情報を取得してDBに登録
+    - POST: フォームからタスク情報を取得してリクエストを送信
             更新後はトップページに自動でリダイレクト
     """
     #POSTの場合、フォームから情報を取得してDBに登録
@@ -126,11 +144,10 @@ def regist():
 #--- タスク編集 ---
 @app.route("/<id>/edit",methods=['GET','POST'])
 def edit(id):
-    """
-    タスク編集ページ
+    """タスク編集画面
 
     - GET: 指定IDのタスクを取得して編集フォームを表示
-    - POST: フォームから取得した値でDBを更新し、
+    - POST: フォームから取得した情報でリクエストを送信、
             更新後はトップページに自動でリダイレクト
     """
     token = session.get('jwt_token')
@@ -166,8 +183,7 @@ def edit(id):
 #--- タスク削除 ---
 @app.route("/<id>/delete",methods=['GET','POST'])
 def delete(id):
-    """
-    タスク削除ページ
+    """タスク削除画面
 
     - GET: 指定IDのタスクを取得して確認画面表示
     - POST: 指定IDのタスクを削除し、トップページに自動リダイレクト
@@ -196,11 +212,10 @@ def delete(id):
 #--- タスク一括削除　---
 @app.route("/delete_all",methods=['GET','POST'])
 def delete_all():
-    """
-    タスク一括削除確認ページ
+    """タスク一括削除確認画面
 
     - GET: task_list=[]の場合のHTMLを表示
-    - POST: TOPのフォームから受け取った複数のタスクIDを使ってDBからデータを取得し、
+    - POST: TOPのフォームから受け取った複数のタスクIDを使ってデータを取得し、
             確認ページに一覧表示する
             ※複数IDをBodyに入れて送るためPOST
     """
@@ -223,11 +238,10 @@ def delete_all():
 
 @app.route("/deletes",methods=['GET','POST'])
 def deletes():
-    """
-    タスク一括削除処理
+    """タスク一括削除処理
 
     - POST: タスク一括削除確認ページのフォームから複数のタスクIDを取得し、
-            ループでそれぞれのタスクをデータベースから削除。
+            ループでそれぞれのタスクを削除。
             削除完了後はトップページにリダイレクトする。
 
     - GET: URLから直接アクセスの場合は、特に処理せず、トップページにリダイレクトする。
