@@ -9,7 +9,12 @@ from jose import jwt,JWTError
 from fastapi.security import OAuth2PasswordBearer
 from typing import Annotated
 from fastapi import Depends
+from dotenv import load_dotenv
 
+load_dotenv()
+
+SECRET_KEY = os.getenv("FASTAPI_SECRET_KEY")
+ALGORITHM = "HS256"
 def create_user(user_create :UserCreate,db :Session):
     """新規ユーザーを作成
     
@@ -56,8 +61,7 @@ def login(username :str,password :str,db :Session):
         return None
     return user
 
-SECRET_KEY = "91828183e516b1314a1efd282d875320e64fafb2356e23a456d32a600a495d6c"
-ALGORITHM = "HS256"
+
 def create_access_token(username :str,user_id :int,expires_delta :timedelta):
     """JWTアクセストークンを作成
     

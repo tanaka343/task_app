@@ -3,10 +3,13 @@ from flask import request,redirect
 import sqlite3
 import os
 import requests
-
+from dotenv import load_dotenv
 
 app = Flask(__name__)
+load_dotenv()
 
+FASTAPI_URL = os.getenv("FASTAPI_URL") # FastAPIのURL
+app.secret_key = os.getenv("FLASK_SECRET_KEY")
 DATABASE = os.path.join(os.path.dirname(os.path.dirname(__file__)),"database.db")
 
 @app.route('/')
@@ -21,8 +24,7 @@ def root():
     return redirect(url_for('top'))
 
 #---ログイン画面---
-FASTAPI_URL = 'http://localhost:8000'  # FastAPIのURL
-app.secret_key = "8db6474b23b4eef4b0f9318a706cd4014323acf10991f5d5194a6bcb92e896d3"
+
 @app.route("/login",methods=['GET','POST'])
 def login():
     """ログイン画面
